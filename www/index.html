@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Đồng Hồ Động Siêu Đẹp</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f172a">
+    <link rel="icon" href="icon-512.png" type="image/png">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="clock-effects.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('ServiceWorker registered'))
+                    .catch(err => console.log('ServiceWorker error', err));
+            });
+        }
+    </script>
+</head>
+
+<body>
+    <video id="custom-bg-video" autoplay loop muted playsinline
+        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; object-fit:cover; z-index:-1; pointer-events:none;"></video>
+    <!-- Nút cài đặt chung -->
+    <div id="settings-btn" class="settings-btn hidden">
+        <i class="fas fa-cog"></i>
+    </div>
+    <div id="fullscreen-btn" class="settings-btn hidden" style="right: 70px;">
+        <i class="fas fa-expand"></i>
+    </div>
+
+    <!-- Overlay mờ khi mở modal -->
+    <div id="modal-overlay" class="modal-overlay"></div>
+
+    <!-- Modal Cài đặt -->
+    <div id="settings-modal" class="settings-modal">
+        <div class="modal-header">
+            <h3><i class="fas fa-sliders-h"></i> Cài đặt</h3>
+            <button id="modal-close" class="modal-close-btn"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <!-- Khu vực Quản lý Cấu hình -->
+            <div class="setting-item column-layout" style="background: rgba(59, 130, 246, 0.1); border-radius: 8px; margin: 10px 22px; padding: 15px;">
+                <span style="margin-bottom: 8px; color: #60a5fa; font-weight: 600;"><i class="fas fa-bookmark"></i> Cấu hình đã lưu</span>
+                <div style="display: flex; gap: 8px; align-items: center; width: 100%; margin-bottom: 8px;">
+                    <select id="profile-selector" class="styled-select" style="flex: 1;">
+                        <option value="current">Cấu hình hiện tại</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 8px; width: 100%;">
+                    <button id="btn-save-profile" class="btn btn-primary" style="flex: 1; padding: 8px; font-size: 0.85rem;"><i class="fas fa-plus"></i> Lưu mới</button>
+                    <button id="btn-update-profile" class="btn btn-secondary" style="flex: 1; padding: 8px; font-size: 0.85rem; display: none;"><i class="fas fa-save"></i> Cập nhật</button>
+                    <button id="btn-delete-profile" class="btn btn-danger" style="flex: 1; padding: 8px; font-size: 0.85rem; display: none;"><i class="fas fa-trash-alt"></i> Xóa</button>
+                </div>
+            </div>
+            
+            <div class="setting-item column-layout">
+                <span style="margin-bottom: 5px;">Kiểu hình nền</span>
+                <div style="display: flex; gap: 8px; align-items: center; width: 100%;">
+                    <select id="bg-selector-dropdown" class="styled-select" style="flex: 1;">
+                        <option value="custom" id="opt-custom-bg" style="display: none;">Nền của bạn</option>
+                        <option value="bg-black">Nền đen tĩnh</option>
+
+                        <option value="fx-particles">Hạt kết nối (Nền đen)</option>
+                        <option value="fx-stars">Sao lấp lánh (Nền đen)</option>
+                        <option value="fx-bubbles">Bọt nước (Nền đen)</option>
+                        <option value="fx-snow">Tuyết rơi (Nền đen)</option>
+                        <option value="fx-matrix">Chữ rơi (Nền đen)</option>
+                        <option value="fx-fireworks">Pháo hoa (Nền đen)</option>
+
+                        <option value="fx-particles|bg-anim-mystic-2">Hạt kết nối + Nền đen xanh</option>
+                        <option value="fx-stars|bg-anim-cold-4">Sao lấp lánh + Nền xanh lam sậm</option>
+                        <option value="fx-bubbles|bg-anim-cold-2">Bọt nước + Nền xanh da trời</option>
+                        <option value="fx-snow|bg-anim-cold-3">Tuyết rơi + Nền tím lợt</option>
+                        <option value="fx-matrix|bg-anim-mystic-4">Chữ rơi + Nền xám đen</option>
+                        <option value="fx-fireworks|bg-anim-mystic-1">Pháo hoa + Nền lục lam - tím</option>
+
+                        <option value="bg-anim-warm-1">Nền màu hồng nhạt</option>
+                        <option value="bg-anim-warm-2">Nền màu vàng cam</option>
+                        <option value="bg-anim-warm-5">Nền màu đỏ cam</option>
+                        <option value="bg-anim-cold-1">Nền màu xanh lam</option>
+                        <option value="bg-anim-cold-4">Nền màu lam sậm</option>
+                        <option value="bg-anim-nature-1">Nền màu xanh ngọc</option>
+                        <option value="bg-anim-nature-3">Nền màu xanh lá cây</option>
+                        <option value="bg-anim-mystic-2">Nền màu đen ám lam</option>
+                        <option value="bg-anim-pastel-3">Nền màu trắng xám</option>
+                        <option value="bg-anim-neon-1">Nền màu đỏ vàng</option>
+                        <option value="bg-anim-neon-3">Nền màu ngọc - tím</option>
+                    </select>
+                    <button id="btn-color-picker" title="Chọn màu nền tuỳ chỉnh"
+                        style="background: rgba(30, 41, 59, 0.9); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #f8fafc; padding: 10px 15px; font-size: 1rem; cursor: pointer; transition: background 0.2s;"><i
+                            class="fas fa-palette"></i></button>
+                    <input type="color" id="input-color-bg" style="display: none;">
+                    <button id="btn-upload-bg" title="Tải lên hình/video nền"
+                        style="background: rgba(30, 41, 59, 0.9); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #f8fafc; padding: 10px 15px; font-size: 1rem; cursor: pointer; transition: background 0.2s;"><i
+                            class="fas fa-folder-open"></i></button>
+                    <input type="file" id="input-upload-bg" accept="image/*,video/*,.gif" style="display: none;">
+                </div>
+            </div>
+
+            <div class="setting-item column-layout" style="margin-top: 8px;">
+                <span style="margin-bottom: 5px;">Hiệu ứng khối đồng hồ</span>
+                <div style="display: flex; gap: 8px; align-items: center; width: 100%;">
+                    <select id="clock-bg-selector" class="styled-select" style="flex: 1;">
+                        <option value="none">Không nền (Mặc định)</option>
+                        <option value="custom-block" id="opt-custom-block" style="display: none;">Ảnh/Video của bạn
+                        </option>
+
+                        <option value="clock-bg-shadow">Đổ bóng</option>
+                        <option value="clock-bg-glow">Phát sáng (Glow)</option>
+                        <option value="clock-bg-neon-glow">Neon phát sáng</option>
+                        <option value="clock-bg-fire-glow">Lửa rực rỡ</option>
+                        <option value="clock-bg-rainbow-glow">Cầu vồng phát sáng</option>
+
+
+                        <option value="clock-bg-glass">Kính mờ (Glass)</option>
+                        <option value="clock-bg-blur">Làm mờ (Blur)</option>
+                        <option value="clock-bg-frosted">Kính sương mù</option>
+                        <option value="clock-bg-crystal">Pha lê</option>
+
+
+                        <option value="clock-bg-3d">Khối 3D (Neumorphism)</option>
+                        <option value="clock-bg-3d-blur">Khối 3D kính mờ</option>
+                        <option value="clock-bg-emboss">Dập nổi (Emboss)</option>
+                        <option value="clock-bg-float">Nổi lơ lửng</option>
+
+
+                        <option value="clock-bg-ink">Mực loang</option>
+                        <option value="clock-bg-gradient">Gradient chuyển màu</option>
+                        <option value="clock-bg-hologram">Hologram (Ánh bạc)</option>
+                        <option value="clock-bg-aurora-block">Cực quang khối</option>
+                        <option value="clock-bg-lava">Dung nham</option>
+                        <option value="clock-bg-ocean">Đại dương</option>
+                        <option value="clock-bg-galaxy-block">Thiên hà khối</option>
+
+
+                        <option value="clock-bg-border-glow">Viền phát sáng</option>
+                        <option value="clock-bg-border-rainbow">Viền cầu vồng</option>
+                        <option value="clock-bg-border-pulse">Viền nhịp đập</option>
+                        <option value="clock-bg-frame-gold">Khung vàng sang trọng</option>
+                        <option value="clock-bg-frame-cyber">Khung Cyber</option>
+
+                    </select>
+                    <button id="btn-upload-block" title="Tải lên hình/video khối"
+                        style="background: rgba(30, 41, 59, 0.9); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #f8fafc; padding: 10px 15px; font-size: 1rem; cursor: pointer; transition: background 0.2s;"><i
+                            class="fas fa-folder-open"></i></button>
+                    <input type="file" id="input-upload-block" accept="image/*,video/*,.gif" style="display: none;">
+                </div>
+            </div>
+
+            <div id="custom-block-size-control" class="setting-item column-layout"
+                style="display: none; margin-top: 8px; padding-top: 0;">
+                <div class="slider-header">
+                    <span>Kích thước ảnh/video</span>
+                    <span id="val-custom-block-size" class="slider-val">100</span>
+                </div>
+                <input type="range" id="slider-custom-block-size" min="10" max="500" value="100" class="styled-slider">
+            </div>
+
+            <div class="setting-item column-layout" style="margin-top: 8px;">
+                <span style="margin-bottom: 5px;">Kiểu Font</span>
+                <select id="font-selector-dropdown" class="styled-select" style="width: 100%;">
+                    <option value="default">Font 1 Bóng hơi</option>
+                    <option value="font2">Font 2 Kẹo hồng</option>
+                    <option value="font3">Font 3 Băng galaxy</option>
+                    <option value="font4">Font 4 Béo</option>
+                    <option value="font5">Font 5 Kính</option>
+                    <option value="font6">Font 6 Hsu</option>
+                </select>
+            </div>
+
+            <hr class="modal-divider">
+            <div class="setting-item">
+                <span>Ẩn giây</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="toggle-hide-seconds">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="setting-item">
+                <span>Ẩn phút</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="toggle-hide-minutes">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="setting-item">
+                <span>Ẩn dấu hai chấm</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="toggle-hide-colons">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="setting-item">
+                <span>Hiện lịch Dương</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="toggle-show-date">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="setting-item">
+                <span>Hiện tuần (Week)</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="toggle-show-week">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="setting-item">
+                <span>Hiện lịch Âm</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="toggle-show-lunar">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="setting-item">
+                <span>Tự xoay theo điện thoại</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="toggle-auto-rotate">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="setting-item">
+                <span>Giờ xếp dọc (khi tắt tự xoay)</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="toggle-vertical">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="setting-item">
+                <span>AOD</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="toggle-keep-awake">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="setting-item" style="margin-top: 10px;">
+                <span>Thời gian làm mờ (giây)</span>
+                <input type="number" id="input-dim-time" min="0" value="15"
+                    style="width: 70px; padding: 6px; border-radius: 6px; border: 1px solid #475569; background: #1e293b; color: white; text-align: center; font-size: 1rem;">
+            </div>
+            <div style="margin-top: -10px; margin-bottom: 10px;">
+
+            </div>
+
+            <hr class="modal-divider">
+            <div class="setting-item column-layout">
+                <span style="margin-bottom: 5px;">Âm thanh báo thức</span>
+                <div style="display: flex; gap: 8px; align-items: center; width: 100%;">
+                    <input type="file" id="alarm-sound-input" accept="audio/*, video/*" style="display: none;">
+                    <button class="btn btn-secondary" onclick="document.getElementById('alarm-sound-input').click()"
+                        style="flex: 1; padding: 8px;">
+                        <i class="fas fa-music"></i> Chọn file
+                    </button>
+                    <button id="btn-test-alarm" class="btn btn-primary" style="padding: 8px;"><i
+                            class="fas fa-play"></i> Thử</button>
+                </div>
+                <small id="alarm-sound-name"
+                    style="color: #94a3b8; font-size: 0.8rem; margin-top: 5px; word-break: break-all;">Chưa chọn (Chỉ
+                    rung)</small>
+            </div>
+
+            <hr class="modal-divider">
+            <div class="setting-item">
+                <span>Chỉnh vị trí phần tử</span>
+                <button id="btn-edit-positions"
+                    style="background: #3b82f6; color: white; border: none; border-radius: 8px; padding: 8px 16px; font-size: 0.9rem; cursor: pointer;"><i
+                        class="fas fa-arrows-alt"></i> Chỉnh</button>
+            </div>
+            <div class="setting-item">
+                <span>Đặt lại vị trí mặc định</span>
+                <button id="btn-reset-positions"
+                    style="background: #ef4444; color: white; border: none; border-radius: 8px; padding: 8px 16px; font-size: 0.9rem; cursor: pointer;"><i
+                        class="fas fa-undo"></i> Reset</button>
+            </div>
+
+            <hr class="modal-divider">
+            <div class="setting-item column-layout">
+                <div class="slider-header">
+                    <span>Kích thước chung</span>
+                    <span id="val-global-size" class="slider-val">80</span>
+                </div>
+                <input type="range" id="slider-global-size" min="1" max="1000" value="80" class="styled-slider">
+            </div>
+
+            <div class="setting-item column-layout">
+                <div class="slider-header">
+                    <span>Khoảng cách dấu 2 chấm</span>
+                    <span id="val-colon-spacing" class="slider-val">-12</span>
+                </div>
+                <input type="range" id="slider-colon-spacing" min="-300" max="50" value="-12" class="styled-slider">
+            </div>
+
+            <div class="setting-item column-layout">
+                <div class="slider-header">
+                    <span>Kích thước dấu 2 chấm</span>
+                    <span id="val-colon-size" class="slider-val">80</span>
+                </div>
+                <input type="range" id="slider-colon-size" min="1" max="1000" value="80" class="styled-slider">
+            </div>
+
+            <div class="setting-item">
+                <span>Kích thước nâng cao</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="toggle-advanced-size">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div id="advanced-size-controls" style="display: none;">
+                <div class="setting-item column-layout">
+                    <div class="slider-header">
+                        <span>Số giờ 1</span>
+                        <span id="val-h1-size" class="slider-val">80</span>
+                    </div>
+                    <input type="range" id="slider-h1-size" min="1" max="1000" value="80" class="styled-slider">
+                </div>
+                <div class="setting-item column-layout">
+                    <div class="slider-header">
+                        <span>Số giờ 2</span>
+                        <span id="val-h2-size" class="slider-val">80</span>
+                    </div>
+                    <input type="range" id="slider-h2-size" min="1" max="1000" value="80" class="styled-slider">
+                </div>
+                <div class="setting-item column-layout">
+                    <div class="slider-header">
+                        <span>Số phút 1</span>
+                        <span id="val-m1-size" class="slider-val">80</span>
+                    </div>
+                    <input type="range" id="slider-m1-size" min="1" max="1000" value="80" class="styled-slider">
+                </div>
+                <div class="setting-item column-layout">
+                    <div class="slider-header">
+                        <span>Số phút 2</span>
+                        <span id="val-m2-size" class="slider-val">80</span>
+                    </div>
+                    <input type="range" id="slider-m2-size" min="1" max="1000" value="80" class="styled-slider">
+                </div>
+                <div class="setting-item column-layout">
+                    <div class="slider-header">
+                        <span>Số giây 1</span>
+                        <span id="val-s1-size" class="slider-val">80</span>
+                    </div>
+                    <input type="range" id="slider-s1-size" min="1" max="1000" value="80" class="styled-slider">
+                </div>
+                <div class="setting-item column-layout">
+                    <div class="slider-header">
+                        <span>Số giây 2</span>
+                        <span id="val-s2-size" class="slider-val">80</span>
+                    </div>
+                    <input type="range" id="slider-s2-size" min="1" max="1000" value="80" class="styled-slider">
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button id="btn-reset-settings" class="btn btn-secondary"><i class="fas fa-undo"></i> Mặc định</button>
+            <button id="btn-save-settings" class="btn btn-primary"><i class="fas fa-save"></i> Lưu</button>
+        </div>
+    </div>
+
+    <!-- Modal Xác nhận (Confirm) -->
+    <div id="confirm-modal" class="confirm-modal">
+        <h3>Xác nhận</h3>
+        <p>Bạn có chắc chắn muốn khôi phục về mặc định?</p>
+        <div class="confirm-actions">
+            <button id="confirm-cancel" class="btn btn-secondary">Hủy</button>
+            <button id="confirm-ok" class="btn btn-primary">Đồng ý</button>
+        </div>
+    </div>
+
+    <!-- Nút Xong khi chỉnh vị trí -->
+    <button id="btn-done-editing"
+        style="display:none; position:fixed; top:30px; left:50%; transform:translateX(-50%); z-index:10000; background:#22c55e; color:white; border:none; border-radius:50px; padding:14px 32px; font-size:1.1rem; font-weight:bold; cursor:pointer; box-shadow: 0 4px 20px rgba(34,197,94,0.5);"><i
+            class="fas fa-check"></i> Xong</button>
+
+    <!-- Container cuộn ngang -->
+    <div id="sheets-container" class="sheets-container">
+
+        <!-- Sheet 1: Đồng hồ thật -->
+        <div class="sheet" id="sheet-clock">
+            <div class="sheet-content">
+                <div class="date-display" id="date-display"></div>
+                <div class="week-display" id="week-display"></div>
+                <div class="lunar-display" id="lunar-display"></div>
+                <div class="digits-display" id="clock-display">
+                    <div class="drag-wrapper" id="wrap-h1"><img id="img-h1" class="digit-h1" src="" alt=""></div>
+                    <div class="drag-wrapper" id="wrap-h2"><img id="img-h2" class="digit-h2" src="" alt=""></div>
+                    <div class="drag-wrapper" id="wrap-colon1"><img id="img-colon1" class="colon" src="" alt=""></div>
+                    <div class="drag-wrapper" id="wrap-m1"><img id="img-m1" class="digit-m1" src="" alt=""></div>
+                    <div class="drag-wrapper" id="wrap-m2"><img id="img-m2" class="digit-m2" src="" alt=""></div>
+                    <div class="drag-wrapper" id="wrap-colon2"><img id="img-colon2" class="colon" src="" alt=""></div>
+                    <div class="drag-wrapper" id="wrap-s1"><img id="img-s1" class="digit-s1" src="" alt=""></div>
+                    <div class="drag-wrapper" id="wrap-s2"><img id="img-s2" class="digit-s2" src="" alt=""></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sheet 2: Bấm giờ (Stopwatch) -->
+        <div class="sheet" id="sheet-stopwatch">
+            <div class="sheet-content">
+                <h2>Bấm giờ</h2>
+                <div class="digits-display" id="stopwatch-display">
+                    <!-- Images inserted via JS -->
+                </div>
+                <div class="controls"
+                    style="display: flex; gap: 15px; justify-content: center; align-items: center; margin-top: 20px; width: 100%;">
+                    <button id="sw-start"
+                        style="background: none; border: none; padding: 0; cursor: pointer; outline: none; transition: transform 0.1s;"
+                        onmousedown="this.style.transform='scale(0.95)'" onmouseup="this.style.transform='scale(1)'"
+                        onmouseleave="this.style.transform='scale(1)'">
+                        <img src="assets/images/batdau.png" alt="Bắt đầu"
+                            style="height: 110px; width: auto; object-fit: contain;">
+                    </button>
+                    <button id="sw-stop"
+                        style="background: none; border: none; padding: 0; cursor: pointer; outline: none; transition: transform 0.1s;"
+                        onmousedown="this.style.transform='scale(0.95)'" onmouseup="this.style.transform='scale(1)'"
+                        onmouseleave="this.style.transform='scale(1)'">
+                        <img src="assets/images/dung.png" alt="Dừng"
+                            style="height: 110px; width: auto; object-fit: contain;">
+                    </button>
+                    <button id="sw-reset"
+                        style="background: none; border: none; padding: 0; cursor: pointer; outline: none; transition: transform 0.1s;"
+                        onmousedown="this.style.transform='scale(0.95)'" onmouseup="this.style.transform='scale(1)'"
+                        onmouseleave="this.style.transform='scale(1)'">
+                        <img src="assets/images/datlai.png" alt="Đặt lại"
+                            style="height: 110px; width: auto; object-fit: contain;">
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sheet 3: Báo thức (Timer) -->
+        <div class="sheet" id="sheet-timer">
+            <div class="sheet-content">
+                <h2>Hẹn giờ báo thức</h2>
+                <div class="timer-setup" id="timer-setup"
+                    style="display: flex; gap: 15px; justify-content: center; align-items: center;">
+                    <label>Phút:</label>
+                    <input type="number" id="timer-minutes" min="1" max="99" value="1">
+                    <button id="tm-start"
+                        style="background: none; border: none; padding: 0; cursor: pointer; outline: none; transition: transform 0.1s;"
+                        onmousedown="this.style.transform='scale(0.95)'" onmouseup="this.style.transform='scale(1)'"
+                        onmouseleave="this.style.transform='scale(1)'">
+                        <img src="assets/images/batdau.png" alt="Bắt đầu"
+                            style="height: 110px; width: auto; object-fit: contain;">
+                    </button>
+                </div>
+                <div class="digits-display" id="timer-display" style="display:none;">
+                    <!-- Images inserted via JS -->
+                </div>
+                <div class="controls" id="timer-controls"
+                    style="display:none; gap: 15px; justify-content: center; align-items: center; margin-top: 20px; width: 100%;">
+                    <button id="tm-stop"
+                        style="background: none; border: none; padding: 0; cursor: pointer; outline: none; transition: transform 0.1s;"
+                        onmousedown="this.style.transform='scale(0.95)'" onmouseup="this.style.transform='scale(1)'"
+                        onmouseleave="this.style.transform='scale(1)'">
+                        <img src="assets/images/dung.png" alt="Dừng"
+                            style="height: 110px; width: auto; object-fit: contain;">
+                    </button>
+                    <button id="tm-reset"
+                        style="background: none; border: none; padding: 0; cursor: pointer; outline: none; transition: transform 0.1s;"
+                        onmousedown="this.style.transform='scale(0.95)'" onmouseup="this.style.transform='scale(1)'"
+                        onmouseleave="this.style.transform='scale(1)'">
+                        <img src="assets/images/datlai.png" alt="Đặt lại"
+                            style="height: 110px; width: auto; object-fit: contain;">
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <audio id="alarm-sound" src="assets/audio/alarm.wav" preload="auto" loop></audio>
+    <audio id="alarm-audio" loop></audio>
+
+    <script src="bg-effects.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>

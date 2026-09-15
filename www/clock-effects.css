@@ -1,0 +1,366 @@
+/* ====== HIỆU ỨNG KHỐI ĐỒNG HỒ ====== */
+/* Shared base for all clock-bg effects */
+#clock-display[class*="clock-bg-"] {
+    display: inline-flex;
+    padding: 30px 45px;
+    border-radius: 35px;
+    transition: all 0.5s ease;
+    position: relative;
+}
+
+/* --- 1. Đổ bóng (Drop Shadow) --- */
+.clock-bg-shadow {
+    background: rgba(0, 0, 0, 0.45);
+    box-shadow:
+        0 15px 50px rgba(0, 0, 0, 0.8),
+        0 5px 20px rgba(0, 0, 0, 0.6),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* --- 2. Phát sáng (Glow) --- */
+.clock-bg-glow {
+    background: rgba(0, 0, 0, 0.3);
+    box-shadow:
+        0 0 40px rgba(59, 130, 246, 0.6),
+        0 0 80px rgba(59, 130, 246, 0.35),
+        0 0 150px rgba(59, 130, 246, 0.15);
+}
+
+/* --- 3. Neon phát sáng --- */
+.clock-bg-neon-glow {
+    background: rgba(0, 0, 0, 0.2);
+    box-shadow:
+        0 0 15px #0ff,
+        0 0 40px #0ff,
+        0 0 80px rgba(0, 255, 255, 0.5),
+        0 0 150px rgba(0, 100, 255, 0.3),
+        inset 0 0 30px rgba(0, 255, 255, 0.08);
+    border: 2px solid rgba(0, 255, 255, 0.5);
+}
+
+/* --- 4. Lửa rực rỡ (Fire Glow) --- */
+.clock-bg-fire-glow {
+    background: rgba(30, 5, 0, 0.4);
+    box-shadow:
+        0 0 30px rgba(255, 100, 0, 0.7),
+        0 0 70px rgba(255, 50, 0, 0.5),
+        0 0 120px rgba(255, 0, 0, 0.3),
+        0 0 180px rgba(200, 0, 0, 0.2);
+    border: 2px solid rgba(255, 100, 0, 0.35);
+    animation: fireFlicker 2s ease-in-out infinite alternate;
+}
+
+@keyframes fireFlicker {
+    0% { box-shadow: 0 0 30px rgba(255,100,0,0.7), 0 0 70px rgba(255,50,0,0.5), 0 0 120px rgba(255,0,0,0.3); }
+    50% { box-shadow: 0 0 50px rgba(255,120,0,0.8), 0 0 100px rgba(255,60,0,0.6), 0 0 160px rgba(255,20,0,0.4); }
+    100% { box-shadow: 0 0 20px rgba(255,80,0,0.5), 0 0 50px rgba(255,40,0,0.3), 0 0 90px rgba(200,0,0,0.2); }
+}
+
+/* --- 5. Cầu vồng phát sáng (Rainbow Glow) --- */
+.clock-bg-rainbow-glow {
+    background: rgba(0, 0, 0, 0.2);
+    animation: rainbowGlow 4s linear infinite;
+}
+
+@keyframes rainbowGlow {
+    0%   { box-shadow: 0 0 40px rgba(255,0,0,0.6), 0 0 100px rgba(255,0,0,0.3); }
+    16%  { box-shadow: 0 0 40px rgba(255,165,0,0.6), 0 0 100px rgba(255,165,0,0.3); }
+    33%  { box-shadow: 0 0 40px rgba(255,255,0,0.6), 0 0 100px rgba(255,255,0,0.3); }
+    50%  { box-shadow: 0 0 40px rgba(0,255,0,0.6), 0 0 100px rgba(0,255,0,0.3); }
+    66%  { box-shadow: 0 0 40px rgba(0,150,255,0.6), 0 0 100px rgba(0,150,255,0.3); }
+    83%  { box-shadow: 0 0 40px rgba(150,0,255,0.6), 0 0 100px rgba(150,0,255,0.3); }
+    100% { box-shadow: 0 0 40px rgba(255,0,0,0.6), 0 0 100px rgba(255,0,0,0.3); }
+}
+
+/* --- 6. Kính mờ (Glassmorphism) --- */
+.clock-bg-glass {
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(18px) saturate(1.4);
+    -webkit-backdrop-filter: blur(18px) saturate(1.4);
+    border: 1.5px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* --- 7. Làm mờ (Blur) --- */
+.clock-bg-blur {
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+}
+
+/* --- 8. Kính sương mù (Frosted) --- */
+.clock-bg-frosted {
+    background: rgba(200, 220, 255, 0.1);
+    backdrop-filter: blur(20px) saturate(1.8);
+    -webkit-backdrop-filter: blur(20px) saturate(1.8);
+    border: 1.5px solid rgba(255, 255, 255, 0.18);
+    box-shadow:
+        inset 0 2px 0 rgba(255, 255, 255, 0.15),
+        0 15px 50px rgba(0, 0, 0, 0.3);
+}
+
+/* --- 9. Pha lê (Crystal) --- */
+.clock-bg-crystal {
+    background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.03));
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1.5px solid rgba(255, 255, 255, 0.3);
+    box-shadow:
+        0 10px 40px rgba(0, 0, 0, 0.3),
+        inset 0 3px 6px rgba(255, 255, 255, 0.15),
+        inset 0 -3px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* --- 10. Khối 3D (Neumorphism) --- */
+.clock-bg-3d {
+    background: linear-gradient(145deg, #1e1e38, #14142a);
+    box-shadow:
+        12px 12px 30px rgba(0, 0, 0, 0.8),
+        -12px -12px 30px rgba(70, 70, 120, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* --- 11. Khối 3D kính mờ --- */
+.clock-bg-3d-blur {
+    background: linear-gradient(145deg, rgba(35,35,70,0.7), rgba(20,20,45,0.7));
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow:
+        12px 12px 30px rgba(0, 0, 0, 0.6),
+        -12px -12px 30px rgba(90, 90, 160, 0.12);
+    border: 1.5px solid rgba(255, 255, 255, 0.1);
+}
+
+/* --- 12. Dập nổi (Emboss) --- */
+.clock-bg-emboss {
+    background: linear-gradient(180deg, #222240, #181830);
+    box-shadow:
+        inset 3px 3px 8px rgba(255, 255, 255, 0.12),
+        inset -3px -3px 8px rgba(0, 0, 0, 0.6),
+        0 8px 25px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* --- 13. Nổi lơ lửng (Float) --- */
+.clock-bg-float {
+    background: rgba(15, 15, 40, 0.55);
+    box-shadow:
+        0 25px 70px rgba(0, 0, 0, 0.6),
+        0 12px 35px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    animation: floatUpDown 3s ease-in-out infinite;
+}
+
+@keyframes floatUpDown {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+}
+
+/* --- 14. Mực loang (Ink Bleed) --- */
+.clock-bg-ink {
+    background: url('assets/images/user_ink.png') center/contain no-repeat;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 60px 80px; /* Thêm padding để mực loang rộng ra */
+    animation: inkPulse 4s ease-in-out infinite alternate;
+    /* Dùng filter để màu mực rực rỡ hơn hoặc hòa trộn tự nhiên */
+    mix-blend-mode: screen; /* Giả sử nền đen, mực sáng. Nếu mực đen, có thể bỏ dòng này */
+}
+
+@keyframes inkPulse {
+    0% { transform: scale(1); filter: brightness(1); }
+    100% { transform: scale(1.05); filter: brightness(1.2); }
+}
+
+/* --- 15. Gradient chuyển màu --- */
+.clock-bg-gradient {
+    background: linear-gradient(135deg, rgba(102,16,242,0.6), rgba(59,130,246,0.6), rgba(16,185,129,0.6));
+    background-size: 300% 300%;
+    border-radius: 0;
+    border: none;
+    padding: 60px 80px;
+    /* Viền mềm mại mờ dần ra ngoài thay vì cắt ngang */
+    -webkit-mask-image: radial-gradient(ellipse at center, black 20%, transparent 65%);
+    mask-image: radial-gradient(ellipse at center, black 20%, transparent 65%);
+    animation: gradientMove 5s ease infinite, pulseSoft 4s ease-in-out infinite alternate;
+}
+
+@keyframes pulseSoft {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.05); }
+}
+@keyframes gradientMove {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* --- 16. Hologram (Ánh bạc) --- */
+.clock-bg-hologram {
+    background: linear-gradient(135deg,
+        rgba(200,200,255,0.14),
+        rgba(255,200,255,0.08),
+        rgba(200,255,255,0.14),
+        rgba(255,255,200,0.08));
+    background-size: 400% 400%;
+    animation: hologramShift 4s ease infinite;
+    border: 1.5px solid rgba(200, 200, 255, 0.25);
+    box-shadow: 0 0 40px rgba(200, 200, 255, 0.15);
+}
+
+@keyframes hologramShift {
+    0%   { background-position: 0% 0%; }
+    25%  { background-position: 100% 0%; }
+    50%  { background-position: 100% 100%; }
+    75%  { background-position: 0% 100%; }
+    100% { background-position: 0% 0%; }
+}
+
+/* --- 17. Cực quang khối (Aurora Block) --- */
+.clock-bg-aurora-block {
+    background: linear-gradient(135deg,
+        rgba(0,255,128,0.4),
+        rgba(0,200,255,0.3),
+        rgba(128,0,255,0.4),
+        rgba(0,255,200,0.2));
+    background-size: 400% 400%;
+    border-radius: 0;
+    border: none;
+    padding: 60px 80px;
+    /* Viền mờ tự nhiên */
+    -webkit-mask-image: radial-gradient(ellipse at center, black 20%, transparent 65%);
+    mask-image: radial-gradient(ellipse at center, black 20%, transparent 65%);
+    animation: auroraBlock 8s ease infinite, pulseSoft 5s ease-in-out infinite alternate;
+}
+
+@keyframes auroraBlock {
+    0%   { background-position: 0% 50%; }
+    33%  { background-position: 100% 0%; }
+    66%  { background-position: 50% 100%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* --- 18. Dung nham (Lava) --- */
+.clock-bg-lava {
+    background: url('assets/images/user_lava.png') center/cover no-repeat;
+    border: none;
+    border-radius: 0;
+    padding: 60px 80px;
+    /* Làm viền hòa quyện mềm mại với nền bằng mask */
+    -webkit-mask-image: radial-gradient(ellipse at center, black 15%, rgba(0,0,0,0.6) 40%, transparent 65%);
+    mask-image: radial-gradient(ellipse at center, black 15%, rgba(0,0,0,0.6) 40%, transparent 65%);
+    /* Dùng drop-shadow để tạo hiệu ứng phát sáng cho khối mờ */
+    filter: drop-shadow(0 0 30px rgba(255, 60, 0, 0.8)) brightness(1.2);
+    animation: lavaGlow 4s ease-in-out infinite alternate;
+}
+
+@keyframes lavaGlow {
+    0% { filter: drop-shadow(0 0 30px rgba(255, 60, 0, 0.8)) brightness(1.2) scale(1); }
+    100% { filter: drop-shadow(0 0 60px rgba(255, 60, 0, 1)) brightness(1.5) scale(1.03); }
+}
+
+/* --- 19. Đại dương (Ocean) --- */
+.clock-bg-ocean {
+    background: linear-gradient(135deg,
+        rgba(0,50,120,0.4),
+        rgba(0,100,170,0.3),
+        rgba(0,160,220,0.25),
+        rgba(0,80,140,0.35));
+    background-size: 300% 300%;
+    animation: oceanWave 6s ease infinite;
+    border: 1.5px solid rgba(0, 150, 220, 0.2);
+    box-shadow: 0 0 40px rgba(0, 100, 220, 0.2);
+}
+
+@keyframes oceanWave {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* --- 20. Thiên hà khối (Galaxy Block) --- */
+.clock-bg-galaxy-block {
+    background:
+        radial-gradient(ellipse at 20% 50%, rgba(120,0,240,0.3), transparent 50%),
+        radial-gradient(ellipse at 80% 30%, rgba(0,120,255,0.25), transparent 45%),
+        radial-gradient(ellipse at 50% 90%, rgba(240,0,180,0.2), transparent 40%),
+        rgba(5, 0, 25, 0.5);
+    box-shadow: 0 0 60px rgba(100, 0, 240, 0.2);
+    border: 1.5px solid rgba(150, 100, 255, 0.15);
+}
+
+/* --- 21. Viền phát sáng (Border Glow) --- */
+.clock-bg-border-glow {
+    background: transparent;
+    border: 2.5px solid rgba(59, 130, 246, 0.6);
+    box-shadow:
+        0 0 20px rgba(59, 130, 246, 0.4),
+        0 0 50px rgba(59, 130, 246, 0.15),
+        inset 0 0 20px rgba(59, 130, 246, 0.06);
+}
+
+/* --- 22. Viền cầu vồng (Rainbow Border) --- */
+.clock-bg-border-rainbow {
+    background: rgba(0,0,0,0.15);
+    border: 3px solid transparent;
+    animation: rainbowBorderColor 3s linear infinite;
+}
+
+@keyframes rainbowBorderColor {
+    0%   { border-color: #ff0000; box-shadow: 0 0 25px rgba(255,0,0,0.4); }
+    16%  { border-color: #ff8800; box-shadow: 0 0 25px rgba(255,136,0,0.4); }
+    33%  { border-color: #ffff00; box-shadow: 0 0 25px rgba(255,255,0,0.4); }
+    50%  { border-color: #00ff00; box-shadow: 0 0 25px rgba(0,255,0,0.4); }
+    66%  { border-color: #0088ff; box-shadow: 0 0 25px rgba(0,136,255,0.4); }
+    83%  { border-color: #8800ff; box-shadow: 0 0 25px rgba(136,0,255,0.4); }
+    100% { border-color: #ff0000; box-shadow: 0 0 25px rgba(255,0,0,0.4); }
+}
+
+/* --- 23. Viền nhịp đập (Pulse Border) --- */
+.clock-bg-border-pulse {
+    background: transparent;
+    border: 2.5px solid rgba(59, 130, 246, 0.4);
+    animation: pulseBorder 2s ease-in-out infinite;
+}
+
+@keyframes pulseBorder {
+    0%, 100% {
+        border-color: rgba(59, 130, 246, 0.3);
+        box-shadow: 0 0 10px rgba(59, 130, 246, 0.1);
+    }
+    50% {
+        border-color: rgba(59, 130, 246, 1);
+        box-shadow: 0 0 40px rgba(59, 130, 246, 0.5), 0 0 80px rgba(59, 130, 246, 0.2);
+    }
+}
+
+/* --- 24. Khung vàng sang trọng (Gold Frame) --- */
+.clock-bg-frame-gold {
+    background: rgba(25, 18, 5, 0.35);
+    border: 2.5px solid rgba(218, 165, 32, 0.6);
+    box-shadow:
+        0 0 30px rgba(218, 165, 32, 0.25),
+        0 0 60px rgba(218, 165, 32, 0.1),
+        inset 0 2px 0 rgba(255, 215, 0, 0.2),
+        inset 0 -2px 0 rgba(218, 165, 32, 0.15);
+}
+
+/* --- 25. Khung Cyber --- */
+.clock-bg-frame-cyber {
+    background: rgba(0, 10, 25, 0.45);
+    border: 2px solid rgba(0, 255, 255, 0.45);
+    box-shadow:
+        0 0 25px rgba(0, 255, 255, 0.2),
+        0 0 60px rgba(0, 255, 255, 0.08),
+        inset 0 0 25px rgba(0, 255, 255, 0.04);
+}
+
+/* --- 26. Tùy chỉnh (Ảnh/Video) --- */
+.clock-bg-custom-block {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    /* Loại bỏ padding thừa nếu muốn ảnh khớp sát số, hoặc giữ nguyên padding mặc định để ảnh bao quanh số */
+    /* padding: 30px 45px; (kế thừa từ #clock-display[class*="clock-bg-"]) */
+}

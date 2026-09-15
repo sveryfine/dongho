@@ -1,0 +1,15 @@
+﻿Line 1: // ====== 0. C├ái ─æß║╖t (Settings State) ======
+Line 48: // Fix cho dß╗» liß╗çu c┼⌐: Nß║┐u globalSize kh├íc 80 nh╞░ng c├íc sß╗æ lß║╗ vß║½n kß║╣t ß╗ƒ 80 (do l
+python : Traceback (most recent call last):
+At line:1 char:1
++ python find_mojibake.py 2>&1 | Out-File -Encoding utf8 mojibake_repor ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Traceback (most recent call last)::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  File "D:\dongho\www\find_mojibake.py", line 11, in <module>
+    print(f"Line {i}: {snippet}")
+  File "E:\Python311\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\x8d' in position 34: character maps to <undefined>

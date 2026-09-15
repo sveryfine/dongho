@@ -1,0 +1,17 @@
+{
+  "name": "Đồng Hồ Siêu Đẹp",
+  "short_name": "Đồng Hồ",
+  "description": "Ứng dụng đồng hồ kỹ thuật số với hình nền động và báo thức.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
