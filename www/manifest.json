@@ -1,6 +1,6 @@
 {
-  "name": "Đồng Hồ Siêu Đẹp",
-  "short_name": "Đồng Hồ",
+  "name": "Chrono",
+  "short_name": "Chrono",
   "description": "Ứng dụng đồng hồ kỹ thuật số với hình nền động và báo thức.",
   "start_url": "./index.html",
   "display": "standalone",
