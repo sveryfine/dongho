@@ -977,6 +977,7 @@ function createDigitImage(char, className = '') {
     else if (settings.fontStyle === 'font4') suffix = 'c';
     else if (settings.fontStyle === 'font5') suffix = 'd';
     else if (settings.fontStyle === 'font6') suffix = 'e';
+    else if (settings.fontStyle === 'font7') suffix = 'n';
 
     if (char === ':') {
         const img = document.createElement('img');
@@ -1169,6 +1170,7 @@ function updateDigitSrc(imgEl, char) {
     else if (settings.fontStyle === 'font4') suffix = 'c';
     else if (settings.fontStyle === 'font5') suffix = 'd';
     else if (settings.fontStyle === 'font6') suffix = 'e';
+    else if (settings.fontStyle === 'font7') suffix = 'n';
 
     if (char === ':') {
         imgEl.src = suffix ? `assets/images/chamcham${suffix}.png` : 'chamcham.png';
