@@ -199,32 +199,31 @@ body.bg-anim-neon-5 { background-image: linear-gradient(135deg, #fc4a1a, #f7b733
 }
 
 .digits-display img.digit-h1 {
-    transform: scale(calc(var(--digit-h1-size) / var(--digit-global-size)));
+    height: var(--digit-h1-size);
 }
 
 .digits-display img.digit-h2 {
-    transform: scale(calc(var(--digit-h2-size) / var(--digit-global-size)));
+    height: var(--digit-h2-size);
 }
 
 .digits-display img.digit-m1 {
-    transform: scale(calc(var(--digit-m1-size) / var(--digit-global-size)));
+    height: var(--digit-m1-size);
 }
 
 .digits-display img.digit-m2 {
-    transform: scale(calc(var(--digit-m2-size) / var(--digit-global-size)));
+    height: var(--digit-m2-size);
 }
 
 .digits-display img.digit-s1 {
-    transform: scale(calc(var(--digit-s1-size) / var(--digit-global-size)));
+    height: var(--digit-s1-size);
 }
 
 .digits-display img.digit-s2 {
-    transform: scale(calc(var(--digit-s2-size) / var(--digit-global-size)));
+    height: var(--digit-s2-size);
 }
 
 .digits-display img.colon {
-    height: var(--digit-global-size);
-    transform: scale(calc(var(--colon-size) / var(--digit-global-size)));
+    height: var(--colon-size);
     width: auto;
     object-fit: contain;
     margin: 0 calc(var(--digit-global-size) * (var(--colon-spacing, -12) / 100));

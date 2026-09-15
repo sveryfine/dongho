@@ -676,6 +676,59 @@ if (btnUploadBg && inputUploadBg) {
     });
 }
 
+let widgetCaptureTimeout = null;
+function captureAndSendWidget() {
+    if (window.AndroidWidgetBridge && typeof window.AndroidWidgetBridge.saveWidgetImage === 'function') {
+        clearTimeout(widgetCaptureTimeout);
+        widgetCaptureTimeout = setTimeout(() => {
+            const clockDisplay = document.querySelector('#sheet-clock .sheet-content');
+            if (clockDisplay && typeof html2canvas !== 'undefined') {
+                html2canvas(clockDisplay, {
+                    backgroundColor: null,
+                    scale: 2 // Tăng chất lượng
+                }).then(canvas => {
+                    const base64Image = canvas.toDataURL('image/png').split(',')[1];
+                    window.AndroidWidgetBridge.saveWidgetImage(base64Image);
+                }).catch(err => console.error('html2canvas error', err));
+            }
+        }, 50); // Đợi UI render xong
+    }
+}
+
+function syncWidgetSettings() {
+    if (typeof captureAndSendWidget === 'function') {
+        captureAndSendWidget();
+    }
+    if (window.AndroidWidgetBridge && typeof window.AndroidWidgetBridge.saveWidgetSettings === 'function') {
+        let suffix = '';
+        if (settings.fontStyle === 'font2') suffix = 'a';
+        else if (settings.fontStyle === 'font3') suffix = 'b';
+        else if (settings.fontStyle === 'font4') suffix = 'c';
+        else if (settings.fontStyle === 'font5') suffix = 'd';
+        else if (settings.fontStyle === 'font6') suffix = 'e';
+        else if (settings.fontStyle === 'font7') suffix = 'n';
+        
+        const widgetConfig = {
+            suffix: suffix,
+            globalSize: settings.globalSize,
+            advancedSize: settings.advancedSize,
+            sizes: {
+                h1: settings.h1Size, h2: settings.h2Size,
+                m1: settings.m1Size, m2: settings.m2Size,
+                colon: settings.colonSize
+            },
+            positions: {
+                h1: settings.elementPositions.h1, h2: settings.elementPositions.h2,
+                m1: settings.elementPositions.m1, m2: settings.elementPositions.m2,
+                colon: settings.elementPositions.colon1
+            },
+            colonSpacing: settings.colonSpacing,
+            hideColons: settings.hideColons
+        };
+        window.AndroidWidgetBridge.saveWidgetSettings(JSON.stringify(widgetConfig));
+    }
+}
+
 function applySettingsToUI() {
     syncToggleUI('toggle-hide-seconds', 'hideSeconds');
     syncToggleUI('toggle-hide-minutes', 'hideMinutes');
@@ -687,6 +740,8 @@ function applySettingsToUI() {
     syncToggleUI('toggle-vertical', 'vertical');
     syncToggleUI('toggle-keep-awake', 'keepAwake');
     syncToggleUI('toggle-advanced-size', 'advancedSize');
+    
+    syncWidgetSettings();
 
     previousGlobalSize = settings.globalSize;
     syncSliderUI(sliderGlobal, settings.globalSize);
@@ -756,7 +811,8 @@ document.addEventListener('visibilitychange', async () => {
 // LÃ†Â°u & MÃ¡ÂºÂ·c Ã„â€˜Ã¡Â»â€¹nh
 document.getElementById('btn-save-settings').addEventListener('click', () => {
     localStorage.setItem('dongho_settings', JSON.stringify(settings));
-    // ÄÃ³ng modal khi lÆ°u
+    syncWidgetSettings();
+    // Ä Ã³ng modal khi lÆ°u
     document.getElementById('modal-close').click();
 });
 
@@ -1181,6 +1237,7 @@ function updateDigitSrc(imgEl, char) {
     }
 }
 
+let lastCapturedSecond = -1;
 function updateClock() {
     const now = new Date();
     const h = formatTwoDigits(now.getHours());
@@ -1239,6 +1296,11 @@ function updateClock() {
 
     fitClockToScreen();
     applyClockBgEffect(settings.clockBg);
+
+    if (now.getSeconds() !== lastCapturedSecond) {
+        lastCapturedSecond = now.getSeconds();
+        if (typeof captureAndSendWidget === 'function') captureAndSendWidget();
+    }
 }
 
 setInterval(updateClock, 1000);

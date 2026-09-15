@@ -4,6 +4,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
+import android.webkit.JavascriptInterface;
+import android.webkit.WebView;
+import android.content.SharedPreferences;
+import android.content.Context;
+import android.content.Intent;
 import com.getcapacitor.BridgeActivity;
 
 public class MainActivity extends BridgeActivity {
@@ -33,6 +38,45 @@ public class MainActivity extends BridgeActivity {
         super.onResume();
         try {
             startLockTask();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        try {
+            WebView webView = this.bridge.getWebView();
+            webView.addJavascriptInterface(new Object() {
+                @JavascriptInterface
+                public void saveWidgetSettings(String jsonConfig) {
+                    SharedPreferences prefs = getSharedPreferences("WidgetPrefs", Context.MODE_PRIVATE);
+                    prefs.edit().putString("widgetConfig", jsonConfig).apply();
+                    
+                    try {
+                        Intent intent = new Intent(MainActivity.this, ClockWidget.class);
+                        intent.setAction(android.appwidget.AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+                        int[] ids = android.appwidget.AppWidgetManager.getInstance(getApplication()).getAppWidgetIds(new android.content.ComponentName(getApplication(), ClockWidget.class));
+                        intent.putExtra(android.appwidget.AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+                        sendBroadcast(intent);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @JavascriptInterface
+                public void saveWidgetImage(String base64Image) {
+                    SharedPreferences prefs = getSharedPreferences("WidgetPrefs", Context.MODE_PRIVATE);
+                    prefs.edit().putString("widgetImageBase64", base64Image).apply();
+                    
+                    try {
+                        Intent intent = new Intent(MainActivity.this, ClockWidget.class);
+                        intent.setAction(android.appwidget.AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+                        int[] ids = android.appwidget.AppWidgetManager.getInstance(getApplication()).getAppWidgetIds(new android.content.ComponentName(getApplication(), ClockWidget.class));
+                        intent.putExtra(android.appwidget.AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+                        sendBroadcast(intent);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, "AndroidWidgetBridge");
         } catch (Exception e) {
             e.printStackTrace();
         }
