@@ -1978,7 +1978,10 @@ const btnLayerDown = document.getElementById('btn-layer-down');
 
 // Make editing controls draggable
 if (editingControls) {
+    const editingButtonsWrapper = document.getElementById('editing-buttons-wrapper');
+
     let ctrlStartX = 0, ctrlStartY = 0;
+    let initialClientX = 0, initialClientY = 0;
     let isDraggingCtrl = false;
 
     editingControls.addEventListener('mousedown', dragCtrlStart);
@@ -1996,6 +1999,9 @@ if (editingControls) {
         const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
         const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
         
+        initialClientX = clientX;
+        initialClientY = clientY;
+
         const rect = editingControls.getBoundingClientRect();
         ctrlStartX = clientX - rect.left;
         ctrlStartY = clientY - rect.top;
@@ -2020,7 +2026,32 @@ if (editingControls) {
     }
 
     function dragCtrlEnd(e) {
+        if (!isDraggingCtrl) return;
         isDraggingCtrl = false;
+        
+        const clientX = e.type.includes('mouse') ? e.clientX : e.changedTouches[0].clientX;
+        const clientY = e.type.includes('mouse') ? e.clientY : e.changedTouches[0].clientY;
+        
+        const dx = Math.abs(clientX - initialClientX);
+        const dy = Math.abs(clientY - initialClientY);
+        
+        // If it was a click (didn't move much) and we clicked on the drag handle
+        if (dx < 5 && dy < 5 && editingButtonsWrapper) {
+            if (e.target.closest('#drag-handle')) {
+                // Check if collapsed
+                if (editingButtonsWrapper.style.maxWidth === '0px' || editingButtonsWrapper.style.opacity === '0') {
+                    editingButtonsWrapper.style.maxWidth = '350px';
+                    editingButtonsWrapper.style.opacity = '1';
+                    editingButtonsWrapper.style.marginLeft = '10px';
+                    editingButtonsWrapper.style.pointerEvents = 'auto';
+                } else {
+                    editingButtonsWrapper.style.maxWidth = '0px';
+                    editingButtonsWrapper.style.opacity = '0';
+                    editingButtonsWrapper.style.marginLeft = '0px';
+                    editingButtonsWrapper.style.pointerEvents = 'none';
+                }
+            }
+        }
     }
 }
 
