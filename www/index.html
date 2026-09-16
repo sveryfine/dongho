@@ -30,12 +30,48 @@
     <div id="settings-btn" class="settings-btn hidden">
         <i class="fas fa-cog"></i>
     </div>
+    <div id="history-btn" class="settings-btn hidden">
+        <i class="fas fa-history"></i>
+    </div>
     <div id="fullscreen-btn" class="settings-btn hidden" style="right: 70px;">
         <i class="fas fa-expand"></i>
     </div>
 
     <!-- Overlay mờ khi mở modal -->
     <div id="modal-overlay" class="modal-overlay"></div>
+
+    <!-- Modal Lịch sử Bấm giờ -->
+    <div id="history-modal" class="settings-modal">
+        <div class="modal-header">
+            <h3><i class="fas fa-history"></i> Lịch sử</h3>
+            <button id="history-close" class="modal-close-btn"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body" style="padding-top: 10px; display: flex; flex-direction: column;">
+            <div id="history-list"
+                style="display: flex; flex-direction: column; gap: 8px; color: #f8fafc; font-size: 1.2rem; align-items: center; flex: 1; justify-content: center;">
+                <!-- Dữ liệu lịch sử sẽ được render vào đây -->
+                <div style="opacity: 0.5; font-size: 0.9em;">Chưa có lịch sử</div>
+            </div>
+        </div>
+        <div class="modal-footer" style="justify-content: center;">
+            <button id="btn-clear-history" class="gulp-btn">
+                <div class="gulp-btn__icon">
+                    <svg class="gulp-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path class="gulp-trash__lid" d="M3 6h18 M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                        <path class="gulp-trash__bin" d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                        <rect class="gulp-trash__fill" x="7" y="12" width="10" height="8" fill="currentColor"
+                            stroke="none" />
+                    </svg>
+                    <svg class="gulp-spinner" viewBox="0 0 50 50">
+                        <circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="4"
+                            stroke-linecap="round" />
+                    </svg>
+                </div>
+                <span class="gulp-btn__text">Xóa lịch sử</span>
+            </button>
+        </div>
+    </div>
 
     <!-- Modal Cài đặt -->
     <div id="settings-modal" class="settings-modal">
@@ -45,20 +81,27 @@
         </div>
         <div class="modal-body">
             <!-- Khu vực Quản lý Cấu hình -->
-            <div class="setting-item column-layout" style="background: rgba(59, 130, 246, 0.1); border-radius: 8px; margin: 10px 22px; padding: 15px;">
-                <span style="margin-bottom: 8px; color: #60a5fa; font-weight: 600;"><i class="fas fa-bookmark"></i> Cấu hình đã lưu</span>
+            <div class="setting-item column-layout"
+                style="background: rgba(59, 130, 246, 0.1); border-radius: 8px; margin: 10px 22px; padding: 15px;">
+                <span style="margin-bottom: 8px; color: #60a5fa; font-weight: 600;"><i class="fas fa-bookmark"></i> Cấu
+                    hình đã lưu</span>
                 <div style="display: flex; gap: 8px; align-items: center; width: 100%; margin-bottom: 8px;">
                     <select id="profile-selector" class="styled-select" style="flex: 1;">
                         <option value="current">Cấu hình hiện tại</option>
                     </select>
                 </div>
                 <div style="display: flex; gap: 8px; width: 100%;">
-                    <button id="btn-save-profile" class="btn btn-primary" style="flex: 1; padding: 8px; font-size: 0.85rem;"><i class="fas fa-plus"></i> Lưu mới</button>
-                    <button id="btn-update-profile" class="btn btn-secondary" style="flex: 1; padding: 8px; font-size: 0.85rem; display: none;"><i class="fas fa-save"></i> Cập nhật</button>
-                    <button id="btn-delete-profile" class="btn btn-danger" style="flex: 1; padding: 8px; font-size: 0.85rem; display: none;"><i class="fas fa-trash-alt"></i> Xóa</button>
+                    <button id="btn-save-profile" class="btn btn-primary"
+                        style="flex: 1; padding: 8px; font-size: 0.85rem;"><i class="fas fa-plus"></i> Lưu mới</button>
+                    <button id="btn-update-profile" class="btn btn-secondary"
+                        style="flex: 1; padding: 8px; font-size: 0.85rem; display: none;"><i class="fas fa-save"></i>
+                        Cập nhật</button>
+                    <button id="btn-delete-profile" class="btn btn-danger"
+                        style="flex: 1; padding: 8px; font-size: 0.85rem; display: none;"><i
+                            class="fas fa-trash-alt"></i> Xóa</button>
                 </div>
             </div>
-            
+
             <div class="setting-item column-layout">
                 <span style="margin-bottom: 5px;">Kiểu hình nền</span>
                 <div style="display: flex; gap: 8px; align-items: center; width: 100%;">

@@ -343,6 +343,26 @@ body.bg-anim-neon-5 { background-image: linear-gradient(135deg, #fc4a1a, #f7b733
     transform: translate(-50%, -50%) scale(var(--modal-scale, 1));
 }
 
+#history-modal {
+    width: 90vw;
+    max-width: 600px;
+    height: 80vh;
+    max-height: 750px;
+    background: 
+        radial-gradient(circle at 10% 0%, rgba(255, 255, 255, 0.25) 0%, transparent 40%),
+        linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.02) 100%);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 
+        0 30px 60px rgba(0, 0, 0, 0.4),
+        inset 1px 1px 2px rgba(255, 255, 255, 0.4),
+        inset 10px 10px 40px rgba(255, 255, 255, 0.12),
+        inset -1px -1px 2px rgba(0, 0, 0, 0.2),
+        inset -10px -10px 40px rgba(0, 0, 0, 0.15);
+    border-radius: 35px;
+}
+
 /* ====== Modal XÃ¡c nháº­n ====== */
 .confirm-modal {
     position: fixed;
@@ -393,8 +413,8 @@ body.bg-anim-neon-5 { background-image: linear-gradient(135deg, #fc4a1a, #f7b733
     justify-content: space-between;
     align-items: center;
     padding: 18px 22px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(15, 23, 42, 0.5);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background: transparent;
     flex-shrink: 0;
 }
 
@@ -440,8 +460,8 @@ body.bg-anim-neon-5 { background-image: linear-gradient(135deg, #fc4a1a, #f7b733
     display: flex;
     justify-content: space-between;
     padding: 15px 22px;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(15, 23, 42, 0.5);
+    border-top: none;
+    background: transparent;
     flex-shrink: 0;
 }
 
@@ -702,3 +722,123 @@ body.bg-anim-neon-5 { background-image: linear-gradient(135deg, #fc4a1a, #f7b733
 
 .editing-mode .drag-wrapper img { pointer-events: none; }
 
+/* ====== Nút Xóa Gulp (Animated Delete Button) ====== */
+.gulp-btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #000000;
+    border: none;
+    border-radius: 30px;
+    height: 50px;
+    min-width: 150px;
+    padding: 0 25px;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    overflow: hidden;
+    transition: background 0.3s;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+.gulp-btn:hover {
+    background: #1f1f1f;
+}
+
+.gulp-btn__icon {
+    position: relative;
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    z-index: 2;
+}
+
+.gulp-trash {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    transition: transform 0.3s;
+    overflow: visible;
+}
+
+.gulp-trash__lid {
+    transform-origin: 30% 100%;
+    transform-box: fill-box;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.gulp-trash__fill {
+    transform-origin: center bottom;
+    transform: scaleY(0);
+    transition: transform 0.8s ease;
+}
+
+.gulp-btn:hover .gulp-trash__lid {
+    transform: rotate(-25deg) translateY(-2px);
+}
+
+.gulp-spinner {
+    display: none;
+}
+
+.gulp-btn__text {
+    position: relative;
+    transition: opacity 0.4s, filter 0.4s;
+    white-space: nowrap;
+    z-index: 1;
+}
+
+/* --- Trạng thái đang xóa (.is-deleting) --- */
+.gulp-btn.is-deleting {
+    background: #000000;
+    pointer-events: none;
+}
+
+.gulp-btn.is-deleting .gulp-trash__lid {
+    animation: gulp-lid-open-close 1.2s forwards;
+}
+
+.gulp-btn.is-deleting .gulp-trash {
+    animation: gulp-trash-shake 0.4s 1.2s forwards;
+}
+
+.gulp-btn.is-deleting .gulp-trash__fill {
+    transform: scaleY(1);
+}
+
+@keyframes gulp-lid-open-close {
+    0% { transform: rotate(-25deg) translateY(-2px); }
+    10% { transform: rotate(-45deg) translateY(-5px); }
+    80% { transform: rotate(-45deg) translateY(-5px); }
+    100% { transform: rotate(0) translateY(0); }
+}
+
+@keyframes gulp-trash-shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-2px) rotate(-5deg); }
+    50% { transform: translateX(2px) rotate(5deg); }
+    75% { transform: translateX(-2px) rotate(-5deg); }
+}
+
+@keyframes gulp-letter-fall {
+    0% { transform: translate(0, 0) scale(1) rotate(0); opacity: 1; }
+    30% { transform: translate(calc(var(--dx) * 0.3), -15px) scale(1.2) rotate(-10deg); opacity: 1; }
+    100% { transform: translate(var(--dx), var(--dy)) scale(0) rotate(-45deg); opacity: 0; }
+}
+
+/* Trạng thái thành công (.is-done) */
+.gulp-btn.is-done {
+    background: #10b981;
+}
+.gulp-btn.is-done .gulp-trash {
+    display: none;
+}
+.gulp-btn.is-done .gulp-btn__text {
+    opacity: 1;
+    filter: none;
+}

@@ -152,32 +152,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ====== 1. XÃ¡Â»Â­ lÃƒÂ½ chÃ¡ÂºÂ¡m mÃƒÂ n hÃƒÂ¬nh & NÃƒÂºt CÃƒÂ i Ã„â€˜Ã¡ÂºÂ·t ======
 const settingsBtn = document.getElementById('settings-btn');
+const historyBtn = document.getElementById('history-btn');
 const fullscreenBtn = document.getElementById('fullscreen-btn');
 const settingsModal = document.getElementById('settings-modal');
+const historyModal = document.getElementById('history-modal');
 const modalOverlay = document.getElementById('modal-overlay');
 let hideSettingsTimeout;
 
 let isAppLocked = false;
 
 function showSettings() {
-    if (isAppLocked) {
+    const isStopwatch = (typeof currentSheetIndex !== 'undefined' && currentSheetIndex === 1);
+    if (isAppLocked || isStopwatch) {
         settingsBtn.classList.add('hidden');
     } else {
         settingsBtn.classList.remove('hidden');
+    }
+    if (historyBtn) {
+        if (isAppLocked || !isStopwatch) {
+            historyBtn.classList.add('hidden');
+        } else {
+            historyBtn.classList.remove('hidden');
+        }
     }
     if (fullscreenBtn) fullscreenBtn.classList.remove('hidden');
     clearTimeout(hideSettingsTimeout);
     hideSettingsTimeout = setTimeout(() => {
         settingsBtn.classList.add('hidden');
+        if (historyBtn) historyBtn.classList.add('hidden');
         if (fullscreenBtn) fullscreenBtn.classList.add('hidden');
     }, 9000);
 }
 
 document.body.addEventListener('touchstart', (e) => {
-    if (!settingsModal.classList.contains('active')) showSettings();
+    if (!settingsModal.classList.contains('active') && (!historyModal || !historyModal.classList.contains('active'))) showSettings();
 });
 document.body.addEventListener('mousedown', (e) => {
-    if (!settingsModal.classList.contains('active')) showSettings();
+    if (!settingsModal.classList.contains('active') && (!historyModal || !historyModal.classList.contains('active'))) showSettings();
 });
 
 showSettings();
@@ -189,6 +200,26 @@ settingsBtn.addEventListener('click', (e) => {
     modalOverlay.classList.add('active');
     clearTimeout(hideSettingsTimeout);
 });
+
+// Mở modal lịch sử
+if (historyBtn) {
+    historyBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        historyModal.classList.add('active');
+        modalOverlay.classList.add('active');
+        clearTimeout(hideSettingsTimeout);
+        renderHistory();
+    });
+}
+
+if (document.getElementById('history-close')) {
+    document.getElementById('history-close').addEventListener('click', (e) => {
+        e.stopPropagation();
+        historyModal.classList.remove('active');
+        modalOverlay.classList.remove('active');
+        showSettings();
+    });
+}
 
 // Toàn màn hình
 function toggleFullscreen() {
@@ -240,6 +271,7 @@ document.getElementById('modal-close').addEventListener('click', (e) => {
 
 modalOverlay.addEventListener('click', () => {
     settingsModal.classList.remove('active');
+    if (historyModal) historyModal.classList.remove('active');
     modalOverlay.classList.remove('active');
     showSettings();
 });
@@ -879,7 +911,7 @@ resetIdleTimer();
 
 // ====== 2. XÃ¡Â»Â­ lÃƒÂ½ VuÃ¡Â»â€˜t ngang (Swipe) ======
 const sheetsContainer = document.getElementById('sheets-container');
-let currentSheetIndex = 0;
+var currentSheetIndex = 0;
 let startX = 0;
 let isDragging = false;
 let currentTranslate = 0;
@@ -944,6 +976,7 @@ function setPositionByIndex() {
     currentTranslate = currentSheetIndex * -window.innerWidth;
     prevTranslate = currentTranslate;
     sheetsContainer.style.transform = `translateX(${currentTranslate}px)`;
+    if (typeof showSettings === 'function') showSettings();
 }
 
 window.addEventListener('resize', () => {
@@ -1431,6 +1464,84 @@ const swDisplay = document.getElementById('stopwatch-display');
 let swInterval;
 let swStartTime = 0;
 let swElapsedTime = 0;
+let swHistory = JSON.parse(localStorage.getItem('dongho_sw_history')) || [];
+
+function renderHistory() {
+    const list = document.getElementById('history-list');
+    if (!list) return;
+    if (swHistory.length === 0) {
+        list.style.justifyContent = 'center';
+        list.innerHTML = '<div style="opacity: 0.5; font-size: 0.9em;">Chưa có lịch sử</div>';
+        return;
+    }
+    list.style.justifyContent = 'flex-start';
+    list.innerHTML = swHistory.map((item, index) => {
+        let timeStr = item;
+        let dateStr = '';
+        if (typeof item === 'object') {
+            timeStr = item.time;
+            dateStr = item.date;
+        }
+        return `<div style="display: flex; justify-content: space-between; align-items: center; width: 90%; border-bottom: none; padding: 8px 0;">
+            <span style="color: #60a5fa; width: 25%; font-size: 1rem;">Lần ${index + 1}</span>
+            ${dateStr ? `<span style="font-size: 0.8rem; color: #94a3b8; flex: 1; text-align: center;">${dateStr}</span>` : '<span style="flex: 1;"></span>'}
+            <span style="width: 30%; text-align: right; font-weight: 600;">${timeStr}</span>
+        </div>`;
+    }).reverse().join('');
+}
+
+if (document.getElementById('btn-clear-history')) {
+    const btnClear = document.getElementById('btn-clear-history');
+    btnClear.addEventListener('click', () => {
+        if (swHistory.length === 0) return;
+        
+        if (btnClear.classList.contains('is-deleting') || btnClear.classList.contains('is-done')) return;
+
+        const textEl = btnClear.querySelector('.gulp-btn__text');
+        const iconEl = btnClear.querySelector('.gulp-btn__icon');
+        const iconRect = iconEl.getBoundingClientRect();
+        const iconCenterX = iconRect.left + iconRect.width / 2;
+        const iconCenterY = iconRect.top + iconRect.height / 2;
+        
+        const text = textEl.innerText;
+        textEl.innerHTML = '';
+        for (let i = 0; i < text.length; i++) {
+            const span = document.createElement('span');
+            span.innerHTML = text[i] === ' ' ? '&nbsp;' : text[i];
+            span.style.display = 'inline-block';
+            textEl.appendChild(span);
+        }
+
+        const spans = textEl.querySelectorAll('span');
+        spans.forEach((span, index) => {
+            const spanRect = span.getBoundingClientRect();
+            const dx = iconCenterX - (spanRect.left + spanRect.width / 2);
+            const dy = iconCenterY - (spanRect.top + spanRect.height / 2);
+            span.style.setProperty('--dx', `${dx}px`);
+            span.style.setProperty('--dy', `${dy}px`);
+            span.style.animation = `gulp-letter-fall 0.6s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards`;
+            span.style.animationDelay = `${index * 0.05}s`;
+        });
+
+        btnClear.classList.add('is-deleting');
+        
+        setTimeout(() => {
+            swHistory = [];
+            localStorage.removeItem('dongho_sw_history');
+            renderHistory();
+            
+            btnClear.classList.remove('is-deleting');
+            btnClear.classList.add('is-done');
+            textEl.innerHTML = 'Đã xóa!';
+            
+            setTimeout(() => {
+                btnClear.classList.remove('is-done');
+                textEl.innerHTML = 'Xóa lịch sử';
+            }, 2000);
+            
+        }, 1600);
+    });
+}
 
 function renderStopwatch() {
     const totalMs = swElapsedTime;
@@ -1450,12 +1561,36 @@ document.getElementById('sw-start').addEventListener('click', () => {
     }
 });
 
+function saveCurrentStopwatchTime() {
+    if (swElapsedTime > 0) {
+        const totalMs = swElapsedTime;
+        const m = formatTwoDigits(Math.floor(totalMs / 60000));
+        const s = formatTwoDigits(Math.floor((totalMs % 60000) / 1000));
+        const ms = formatTwoDigits(Math.floor((totalMs % 1000) / 10));
+        const timeStr = `${m}:${s}:${ms}`;
+        
+        const lastEntry = swHistory[swHistory.length - 1];
+        const lastTimeStr = (lastEntry && typeof lastEntry === 'object') ? lastEntry.time : lastEntry;
+        
+        if (swHistory.length === 0 || lastTimeStr !== timeStr) {
+            const now = new Date();
+            const dateStr = `${formatTwoDigits(now.getDate())}/${formatTwoDigits(now.getMonth()+1)}/${now.getFullYear()} ${formatTwoDigits(now.getHours())}:${formatTwoDigits(now.getMinutes())}`;
+            swHistory.push({ time: timeStr, date: dateStr });
+            localStorage.setItem('dongho_sw_history', JSON.stringify(swHistory));
+        }
+    }
+}
+
 document.getElementById('sw-stop').addEventListener('click', () => {
-    clearInterval(swInterval);
-    swInterval = null;
+    if (swInterval) {
+        clearInterval(swInterval);
+        swInterval = null;
+        saveCurrentStopwatchTime();
+    }
 });
 
 document.getElementById('sw-reset').addEventListener('click', () => {
+    saveCurrentStopwatchTime();
     clearInterval(swInterval);
     swInterval = null;
     swElapsedTime = 0;
