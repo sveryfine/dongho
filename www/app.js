@@ -1976,6 +1976,54 @@ const btnResetPositions = document.getElementById('btn-reset-positions');
 const btnLayerUp = document.getElementById('btn-layer-up');
 const btnLayerDown = document.getElementById('btn-layer-down');
 
+// Make editing controls draggable
+if (editingControls) {
+    let ctrlStartX = 0, ctrlStartY = 0;
+    let isDraggingCtrl = false;
+
+    editingControls.addEventListener('mousedown', dragCtrlStart);
+    editingControls.addEventListener('touchstart', dragCtrlStart, {passive: false});
+    
+    window.addEventListener('mousemove', dragCtrlMove);
+    window.addEventListener('touchmove', dragCtrlMove, {passive: false});
+    
+    window.addEventListener('mouseup', dragCtrlEnd);
+    window.addEventListener('touchend', dragCtrlEnd);
+
+    function dragCtrlStart(e) {
+        if (e.target.tagName.toLowerCase() === 'button' || e.target.closest('button')) return; // Don't drag if clicking buttons
+        isDraggingCtrl = true;
+        const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+        const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+        
+        const rect = editingControls.getBoundingClientRect();
+        ctrlStartX = clientX - rect.left;
+        ctrlStartY = clientY - rect.top;
+        
+        editingControls.style.left = rect.left + 'px';
+        editingControls.style.top = rect.top + 'px';
+        editingControls.style.transform = 'none';
+        editingControls.style.margin = '0';
+        editingControls.style.right = 'auto';
+        
+        e.preventDefault();
+    }
+
+    function dragCtrlMove(e) {
+        if (!isDraggingCtrl) return;
+        const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+        const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+        
+        editingControls.style.left = (clientX - ctrlStartX) + 'px';
+        editingControls.style.top = (clientY - ctrlStartY) + 'px';
+        e.preventDefault();
+    }
+
+    function dragCtrlEnd(e) {
+        isDraggingCtrl = false;
+    }
+}
+
 function ensureUniqueZIndices() {
     if (!settings.elementPositions) settings.elementPositions = {};
     const keys = Object.keys(draggableMap);
