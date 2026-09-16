@@ -199,28 +199,35 @@ body.bg-anim-neon-5 { background-image: linear-gradient(135deg, #fc4a1a, #f7b733
 }
 
 .digits-display img.digit-h1 {
-    height: var(--digit-h1-size);
+    height: var(--digit-global-size);
 }
 
 .digits-display img.digit-h2 {
-    height: var(--digit-h2-size);
+    height: var(--digit-global-size);
 }
 
 .digits-display img.digit-m1 {
-    height: var(--digit-m1-size);
+    height: var(--digit-global-size);
 }
 
 .digits-display img.digit-m2 {
-    height: var(--digit-m2-size);
+    height: var(--digit-global-size);
 }
 
 .digits-display img.digit-s1 {
-    height: var(--digit-s1-size);
+    height: var(--digit-global-size);
 }
 
 .digits-display img.digit-s2 {
-    height: var(--digit-s2-size);
+    height: var(--digit-global-size);
 }
+
+#wrap-h1 { transform: scale(var(--scale-h1, 1)); --my-scale: var(--scale-h1, 1); }
+#wrap-h2 { transform: scale(var(--scale-h2, 1)); --my-scale: var(--scale-h2, 1); }
+#wrap-m1 { transform: scale(var(--scale-m1, 1)); --my-scale: var(--scale-m1, 1); }
+#wrap-m2 { transform: scale(var(--scale-m2, 1)); --my-scale: var(--scale-m2, 1); }
+#wrap-s1 { transform: scale(var(--scale-s1, 1)); --my-scale: var(--scale-s1, 1); }
+#wrap-s2 { transform: scale(var(--scale-s2, 1)); --my-scale: var(--scale-s2, 1); }
 
 .digits-display img.colon {
     height: var(--colon-size);
@@ -693,8 +700,8 @@ body.bg-anim-neon-5 { background-image: linear-gradient(135deg, #fc4a1a, #f7b733
 .editing-mode .date-display,
 .editing-mode .week-display,
 .editing-mode .lunar-display {
-    outline: 2px dashed rgba(255, 255, 255, 0.5);
-    outline-offset: 4px;
+    outline: calc(2px / (var(--sheet-scale, 1) * var(--my-scale, 1))) dashed rgba(255, 255, 255, 0.5);
+    outline-offset: calc(4px / var(--my-scale, 1));
     cursor: grab;
     border-radius: 8px;
 }
@@ -707,15 +714,19 @@ body.bg-anim-neon-5 { background-image: linear-gradient(135deg, #fc4a1a, #f7b733
     outline-color: #3b82f6;
 }
 
+.editing-mode .active-layer {
+    outline-color: #f59e0b !important;
+}
+
 .editing-mode .drag-wrapper::after,
 .editing-mode .date-display::after,
 .editing-mode .week-display::after,
 .editing-mode .lunar-display::after {
-    content: 'â‹®â‹®';
+    content: '⋮⋮';
     position: absolute;
-    top: 2px;
-    right: 2px;
-    font-size: 10px;
+    top: calc(2px / (var(--sheet-scale, 1) * var(--my-scale, 1)));
+    right: calc(2px / (var(--sheet-scale, 1) * var(--my-scale, 1)));
+    font-size: calc(10px / (var(--sheet-scale, 1) * var(--my-scale, 1)));
     color: rgba(255,255,255,0.4);
     pointer-events: none;
 }

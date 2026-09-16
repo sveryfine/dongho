@@ -332,6 +332,13 @@ function updateCSSVariables() {
         document.documentElement.style.setProperty('--digit-m2-size', settings.m2Size + 'px');
         document.documentElement.style.setProperty('--digit-s1-size', settings.s1Size + 'px');
         document.documentElement.style.setProperty('--digit-s2-size', settings.s2Size + 'px');
+        
+        document.documentElement.style.setProperty('--scale-h1', settings.h1Size / settings.globalSize);
+        document.documentElement.style.setProperty('--scale-h2', settings.h2Size / settings.globalSize);
+        document.documentElement.style.setProperty('--scale-m1', settings.m1Size / settings.globalSize);
+        document.documentElement.style.setProperty('--scale-m2', settings.m2Size / settings.globalSize);
+        document.documentElement.style.setProperty('--scale-s1', settings.s1Size / settings.globalSize);
+        document.documentElement.style.setProperty('--scale-s2', settings.s2Size / settings.globalSize);
     } else {
         document.documentElement.style.setProperty('--digit-h1-size', settings.globalSize + 'px');
         document.documentElement.style.setProperty('--digit-h2-size', settings.globalSize + 'px');
@@ -339,6 +346,13 @@ function updateCSSVariables() {
         document.documentElement.style.setProperty('--digit-m2-size', settings.globalSize + 'px');
         document.documentElement.style.setProperty('--digit-s1-size', settings.globalSize + 'px');
         document.documentElement.style.setProperty('--digit-s2-size', settings.globalSize + 'px');
+        
+        document.documentElement.style.setProperty('--scale-h1', 1);
+        document.documentElement.style.setProperty('--scale-h2', 1);
+        document.documentElement.style.setProperty('--scale-m1', 1);
+        document.documentElement.style.setProperty('--scale-m2', 1);
+        document.documentElement.style.setProperty('--scale-s1', 1);
+        document.documentElement.style.setProperty('--scale-s2', 1);
     }
 
     document.documentElement.style.setProperty('--colon-spacing', settings.colonSpacing);
@@ -378,6 +392,7 @@ function fitClockToScreen() {
         const scale = Math.min(1, scaleX, scaleY);
 
         content.style.transform = `scale(${scale})`;
+        content.style.setProperty('--sheet-scale', scale);
     });
 }
 window.addEventListener('resize', fitClockToScreen);
@@ -1872,10 +1887,18 @@ function applyElementPositions() {
     Object.keys(mappings).forEach(key => {
         const el = document.getElementById(mappings[key]);
         if (el && pos[key]) {
-            el.style.transform = `translate(${pos[key].x || 0}px, ${pos[key].y || 0}px)`;
+            el.style.transform = `translate(${pos[key].x || 0}px, ${pos[key].y || 0}px) scale(var(--scale-${key}, 1))`;
+            if (pos[key].z !== undefined) {
+                el.style.zIndex = pos[key].z;
+            } else {
+                el.style.zIndex = '';
+            }
         }
     });
 }
+
+let currentActiveLayerKey = null;
+let currentActiveLayerEl = null;
 
 function makeElementDraggable(el, posKey) {
     let startX = 0, startY = 0;
@@ -1884,6 +1907,12 @@ function makeElementDraggable(el, posKey) {
 
     function onStart(e) {
         if (!isEditingPositions) return;
+        
+        currentActiveLayerKey = posKey;
+        currentActiveLayerEl = el;
+        document.querySelectorAll('.active-layer').forEach(d => d.classList.remove('active-layer'));
+        el.classList.add('active-layer');
+
         isDragging = true;
         const pos = settings.elementPositions || {};
         currentX = (pos[posKey] && pos[posKey].x) || 0;
@@ -1903,7 +1932,7 @@ function makeElementDraggable(el, posKey) {
         const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
         currentX = clientX - startX;
         currentY = clientY - startY;
-        el.style.transform = `translate(${currentX}px, ${currentY}px)`;
+        el.style.transform = `translate(${currentX}px, ${currentY}px) scale(var(--scale-${posKey}, 1))`;
         e.preventDefault();
         e.stopPropagation();
     }
@@ -1941,8 +1970,71 @@ Object.keys(draggableMap).forEach(key => {
 
 // Enter edit mode
 const btnEditPositions = document.getElementById('btn-edit-positions');
+const editingControls = document.getElementById('editing-controls');
 const btnDoneEditing = document.getElementById('btn-done-editing');
 const btnResetPositions = document.getElementById('btn-reset-positions');
+const btnLayerUp = document.getElementById('btn-layer-up');
+const btnLayerDown = document.getElementById('btn-layer-down');
+
+function ensureUniqueZIndices() {
+    if (!settings.elementPositions) settings.elementPositions = {};
+    const keys = Object.keys(draggableMap);
+    
+    // Sort keys by current z-index (default 0)
+    keys.sort((a, b) => {
+        let zA = (settings.elementPositions[a] && settings.elementPositions[a].z !== undefined) ? settings.elementPositions[a].z : 0;
+        let zB = (settings.elementPositions[b] && settings.elementPositions[b].z !== undefined) ? settings.elementPositions[b].z : 0;
+        return zA - zB;
+    });
+
+    // Reassign strictly 1 to N
+    keys.forEach((k, i) => {
+        if (!settings.elementPositions[k]) settings.elementPositions[k] = { x: 0, y: 0 };
+        settings.elementPositions[k].z = i + 1;
+        const el = document.getElementById(draggableMap[k]);
+        if (el) el.style.zIndex = i + 1;
+    });
+}
+
+if (btnLayerUp) {
+    btnLayerUp.addEventListener('click', () => {
+        if (!currentActiveLayerKey || !currentActiveLayerEl) return;
+        ensureUniqueZIndices();
+        
+        let currentZ = settings.elementPositions[currentActiveLayerKey].z;
+        const keys = Object.keys(draggableMap);
+        let targetKey = keys.find(k => settings.elementPositions[k] && settings.elementPositions[k].z === currentZ + 1);
+        
+        if (targetKey) {
+            settings.elementPositions[currentActiveLayerKey].z = currentZ + 1;
+            settings.elementPositions[targetKey].z = currentZ;
+            
+            currentActiveLayerEl.style.zIndex = currentZ + 1;
+            const targetEl = document.getElementById(draggableMap[targetKey]);
+            if (targetEl) targetEl.style.zIndex = currentZ;
+        }
+    });
+}
+
+if (btnLayerDown) {
+    btnLayerDown.addEventListener('click', () => {
+        if (!currentActiveLayerKey || !currentActiveLayerEl) return;
+        ensureUniqueZIndices();
+        
+        let currentZ = settings.elementPositions[currentActiveLayerKey].z;
+        const keys = Object.keys(draggableMap);
+        let targetKey = keys.find(k => settings.elementPositions[k] && settings.elementPositions[k].z === currentZ - 1);
+        
+        if (targetKey) {
+            settings.elementPositions[currentActiveLayerKey].z = currentZ - 1;
+            settings.elementPositions[targetKey].z = currentZ;
+            
+            currentActiveLayerEl.style.zIndex = currentZ - 1;
+            const targetEl = document.getElementById(draggableMap[targetKey]);
+            if (targetEl) targetEl.style.zIndex = currentZ;
+        }
+    });
+}
 
 if (btnEditPositions) {
     btnEditPositions.addEventListener('click', () => {
@@ -1951,8 +2043,8 @@ if (btnEditPositions) {
         // Close settings modal
         document.getElementById('settings-modal').classList.remove('active');
         document.getElementById('modal-overlay').classList.remove('active');
-        // Show done button
-        if (btnDoneEditing) btnDoneEditing.style.display = 'block';
+        // Show controls
+        if (editingControls) editingControls.style.display = 'flex';
     });
 }
 
@@ -1960,7 +2052,12 @@ if (btnDoneEditing) {
     btnDoneEditing.addEventListener('click', () => {
         isEditingPositions = false;
         document.body.classList.remove('editing-mode');
-        btnDoneEditing.style.display = 'none';
+        if (editingControls) editingControls.style.display = 'none';
+        
+        document.querySelectorAll('.active-layer').forEach(d => d.classList.remove('active-layer'));
+        currentActiveLayerKey = null;
+        currentActiveLayerEl = null;
+
         // Re-open settings modal
         document.getElementById('settings-modal').classList.add('active');
         document.getElementById('modal-overlay').classList.add('active');
@@ -1970,12 +2067,12 @@ if (btnDoneEditing) {
 if (btnResetPositions) {
     btnResetPositions.addEventListener('click', () => {
         const defaultPos = {
-            h1: { x: 0, y: 0 }, h2: { x: 0, y: 0 },
-            colon1: { x: 0, y: 0 }, m1: { x: 0, y: 0 },
-            m2: { x: 0, y: 0 }, colon2: { x: 0, y: 0 },
-            s1: { x: 0, y: 0 }, s2: { x: 0, y: 0 },
-            date: { x: 0, y: 0 }, week: { x: 0, y: 0 },
-            lunar: { x: 0, y: 0 }
+            h1: { x: 0, y: 0, z: 0 }, h2: { x: 0, y: 0, z: 0 },
+            colon1: { x: 0, y: 0, z: 0 }, m1: { x: 0, y: 0, z: 0 },
+            m2: { x: 0, y: 0, z: 0 }, colon2: { x: 0, y: 0, z: 0 },
+            s1: { x: 0, y: 0, z: 0 }, s2: { x: 0, y: 0, z: 0 },
+            date: { x: 0, y: 0, z: 0 }, week: { x: 0, y: 0, z: 0 },
+            lunar: { x: 0, y: 0, z: 0 }
         };
         settings.elementPositions = { ...defaultPos };
         applyElementPositions();
