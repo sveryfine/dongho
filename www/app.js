@@ -1070,23 +1070,59 @@ function createDigitImage(char, className = '') {
 
     if (char === ':') {
         const img = document.createElement('img');
-        img.src = suffix ? `assets/images/chamcham${suffix}.png` : 'chamcham.png';
+        img.setAttribute('src', suffix ? `assets/images/chamcham${suffix}.png` : `assets/images/chamcham.png`);
         img.className = 'colon';
         return img;
     }
     const img = document.createElement('img');
-    img.src = suffix ? `assets/images/${char}${suffix}.png` : `assets/images/${char}.png`;
+    img.setAttribute('src', suffix ? `assets/images/${char}${suffix}.png` : `assets/images/${char}.png`);
     img.alt = char;
     if (className) img.className = className;
     return img;
 }
 
 function renderTimeToContainer(timeString, container) {
-    container.innerHTML = '';
-    for (let i = 0; i < timeString.length; i++) {
-        container.appendChild(createDigitImage(timeString[i]));
+    let suffix = '';
+    if (settings.fontStyle === 'font2') suffix = 'a';
+    else if (settings.fontStyle === 'font3') suffix = 'b';
+    else if (settings.fontStyle === 'font4') suffix = 'c';
+    else if (settings.fontStyle === 'font5') suffix = 'd';
+    else if (settings.fontStyle === 'font6') suffix = 'e';
+    else if (settings.fontStyle === 'font7') suffix = 'n';
+
+    if (container.children.length !== timeString.length) {
+        container.innerHTML = '';
+        for (let i = 0; i < timeString.length; i++) {
+            container.appendChild(createDigitImage(timeString[i]));
+        }
+    } else {
+        for (let i = 0; i < timeString.length; i++) {
+            const char = timeString[i];
+            const img = container.children[i];
+            
+            let src = '';
+            let className = '';
+            if (char === ':') {
+                src = suffix ? `assets/images/chamcham${suffix}.png` : `assets/images/chamcham.png`;
+                className = 'colon';
+            } else {
+                src = suffix ? `assets/images/${char}${suffix}.png` : `assets/images/${char}.png`;
+                className = '';
+            }
+            
+            if (img.getAttribute('src') !== src) {
+                img.setAttribute('src', src);
+            }
+            if (img.className !== className) {
+                img.className = className;
+            }
+            if (img.alt !== char) {
+                img.alt = char;
+            }
+        }
     }
 }
+
 
 function getIsVertical() {
     if (settings.autoRotate) {
