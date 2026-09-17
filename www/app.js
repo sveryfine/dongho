@@ -76,7 +76,7 @@ loadProfiles();
 function renderProfileSelector() {
     const selector = document.getElementById('profile-selector');
     if (!selector) return;
-    
+
     selector.innerHTML = '<option value="current">Cấu hình hiện tại</option>';
     Object.keys(savedProfiles).forEach(name => {
         const opt = document.createElement('option');
@@ -91,11 +91,11 @@ function updateProfileButtons() {
     const selector = document.getElementById('profile-selector');
     if (!selector) return;
     const isCustom = selector.value !== 'current';
-    
+
     const btnSave = document.getElementById('btn-save-profile');
     const btnUpdate = document.getElementById('btn-update-profile');
     const btnDelete = document.getElementById('btn-delete-profile');
-    
+
     if (btnSave) btnSave.style.display = isCustom ? 'none' : 'block';
     if (btnUpdate) btnUpdate.style.display = isCustom ? 'block' : 'none';
     if (btnDelete) btnDelete.style.display = isCustom ? 'block' : 'none';
@@ -103,7 +103,7 @@ function updateProfileButtons() {
 
 document.addEventListener('DOMContentLoaded', () => {
     renderProfileSelector();
-    
+
     document.getElementById('profile-selector')?.addEventListener('change', (e) => {
         updateProfileButtons();
         if (e.target.value !== 'current') {
@@ -224,20 +224,20 @@ if (document.getElementById('history-close')) {
 // Toàn màn hình
 function toggleFullscreen() {
     isAppLocked = !isAppLocked;
-    
+
     let ScreenPinning = null;
     if (window.Capacitor && window.Capacitor.registerPlugin) {
         ScreenPinning = window.Capacitor.registerPlugin('ScreenPinning');
     } else if (window.Capacitor && window.Capacitor.Plugins) {
         ScreenPinning = window.Capacitor.Plugins.ScreenPinning;
     }
-    
+
     if (isAppLocked) {
         try {
             if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
                 document.documentElement.requestFullscreen();
             }
-        } catch (e) {}
+        } catch (e) { }
         if (ScreenPinning) ScreenPinning.pin();
         fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
     } else {
@@ -245,7 +245,7 @@ function toggleFullscreen() {
             if (document.fullscreenElement && document.exitFullscreen) {
                 document.exitFullscreen();
             }
-        } catch (e) {}
+        } catch (e) { }
         if (ScreenPinning) ScreenPinning.unpin();
         fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
     }
@@ -332,7 +332,7 @@ function updateCSSVariables() {
         document.documentElement.style.setProperty('--digit-m2-size', settings.m2Size + 'px');
         document.documentElement.style.setProperty('--digit-s1-size', settings.s1Size + 'px');
         document.documentElement.style.setProperty('--digit-s2-size', settings.s2Size + 'px');
-        
+
         document.documentElement.style.setProperty('--scale-h1', settings.h1Size / settings.globalSize);
         document.documentElement.style.setProperty('--scale-h2', settings.h2Size / settings.globalSize);
         document.documentElement.style.setProperty('--scale-m1', settings.m1Size / settings.globalSize);
@@ -346,7 +346,7 @@ function updateCSSVariables() {
         document.documentElement.style.setProperty('--digit-m2-size', settings.globalSize + 'px');
         document.documentElement.style.setProperty('--digit-s1-size', settings.globalSize + 'px');
         document.documentElement.style.setProperty('--digit-s2-size', settings.globalSize + 'px');
-        
+
         document.documentElement.style.setProperty('--scale-h1', 1);
         document.documentElement.style.setProperty('--scale-h2', 1);
         document.documentElement.style.setProperty('--scale-m1', 1);
@@ -490,7 +490,7 @@ document.querySelectorAll('.styled-slider').forEach(slider => {
         if (!e.touches || !e.touches[0]) return;
         const dy = Math.abs(e.touches[0].clientY - startTouchY);
         const dx = Math.abs(e.touches[0].clientX - startTouchX);
-        
+
         // NÃ¡ÂºÂ¿u vuÃ¡Â»â€˜t dÃ¡Â»Âc nhiÃ¡Â»Âu hÃ†Â¡n ngang vÃƒÂ  di chuyÃ¡Â»Æ’n > 5px, nghÃ„Â©a lÃƒÂ  Ã„â€˜ang cuÃ¡Â»â„¢n modal
         if (dy > dx && dy > 5) {
             isVerticalScroll = true;
@@ -611,12 +611,12 @@ function applyBackgroundStyle(value) {
 
     // Stop any canvas effect
     if (window.bgEffects) window.bgEffects.stop();
-    
+
     // Check custom color
     if (value && value.startsWith('color|')) {
         const hex = value.split('|')[1];
         document.body.style.backgroundColor = hex;
-        
+
         let optCustom = document.getElementById('opt-custom-bg');
         if (optCustom) {
             optCustom.textContent = 'Nền màu tuỳ chỉnh';
@@ -754,7 +754,7 @@ function syncWidgetSettings() {
         else if (settings.fontStyle === 'font5') suffix = 'd';
         else if (settings.fontStyle === 'font6') suffix = 'e';
         else if (settings.fontStyle === 'font7') suffix = 'n';
-        
+
         const widgetConfig = {
             suffix: suffix,
             globalSize: settings.globalSize,
@@ -787,7 +787,7 @@ function applySettingsToUI() {
     syncToggleUI('toggle-vertical', 'vertical');
     syncToggleUI('toggle-keep-awake', 'keepAwake');
     syncToggleUI('toggle-advanced-size', 'advancedSize');
-    
+
     syncWidgetSettings();
 
     previousGlobalSize = settings.globalSize;
@@ -877,12 +877,12 @@ document.getElementById('confirm-ok').addEventListener('click', () => {
     confirmModal.classList.remove('active');
     localStorage.removeItem('dongho_settings');
     settings = { ...defaultSettings };
-    
+
     // Reset profile selector
     const selector = document.getElementById('profile-selector');
     if (selector) selector.value = 'current';
     if (typeof updateProfileButtons === 'function') updateProfileButtons();
-    
+
     applySettingsToUI();
     updateClock();
     updateDateDisplay();
@@ -1114,7 +1114,7 @@ function renderTimeToContainer(timeString, container) {
         for (let i = 0; i < timeString.length; i++) {
             const char = timeString[i];
             const img = container.children[i];
-            
+
             let src = '';
             let className = '';
             if (char === ':') {
@@ -1124,7 +1124,7 @@ function renderTimeToContainer(timeString, container) {
                 src = suffix ? `assets/images/${char}${suffix}.png` : `assets/images/${char}.png`;
                 className = '';
             }
-            
+
             if (img.getAttribute('src') !== src) {
                 img.setAttribute('src', src);
             }
@@ -1361,10 +1361,10 @@ function updateClock() {
     } else {
         if (wrapS1) { wrapS1.style.display = 'inline-block'; const img = document.getElementById('img-s1'); if (img) { updateDigitSrc(img, s[0]); img.className = 'digit-s1'; } }
         if (wrapS2) { wrapS2.style.display = 'inline-block'; const img = document.getElementById('img-s2'); if (img) { updateDigitSrc(img, s[1]); img.className = 'digit-s2'; } }
-        if (wrapColon2) { 
-            wrapColon2.style.display = 'inline-block'; 
-            const img = document.getElementById('img-colon2'); 
-            if (img) { updateDigitSrc(img, ':'); img.className = 'colon'; img.style.visibility = settings.hideColons ? 'hidden' : 'visible'; } 
+        if (wrapColon2) {
+            wrapColon2.style.display = 'inline-block';
+            const img = document.getElementById('img-colon2');
+            if (img) { updateDigitSrc(img, ':'); img.className = 'colon'; img.style.visibility = settings.hideColons ? 'hidden' : 'visible'; }
         }
     }
 
@@ -1374,7 +1374,7 @@ function updateClock() {
     } else {
         clockDisplay.classList.remove('vertical');
     }
-    
+
     // Apply position adjustments so they persist through updates (if not dragging right now)
     if (typeof isDragging === 'undefined' || !isDragging) {
         applyElementPositions();
@@ -1547,7 +1547,7 @@ if (document.getElementById('btn-clear-history')) {
     const btnClear = document.getElementById('btn-clear-history');
     btnClear.addEventListener('click', () => {
         if (swHistory.length === 0) return;
-        
+
         if (btnClear.classList.contains('is-deleting') || btnClear.classList.contains('is-done')) return;
 
         const textEl = btnClear.querySelector('.gulp-btn__text');
@@ -1555,7 +1555,7 @@ if (document.getElementById('btn-clear-history')) {
         const iconRect = iconEl.getBoundingClientRect();
         const iconCenterX = iconRect.left + iconRect.width / 2;
         const iconCenterY = iconRect.top + iconRect.height / 2;
-        
+
         const text = textEl.innerText;
         textEl.innerHTML = '';
         for (let i = 0; i < text.length; i++) {
@@ -1577,21 +1577,21 @@ if (document.getElementById('btn-clear-history')) {
         });
 
         btnClear.classList.add('is-deleting');
-        
+
         setTimeout(() => {
             swHistory = [];
             localStorage.removeItem('dongho_sw_history');
             renderHistory();
-            
+
             btnClear.classList.remove('is-deleting');
             btnClear.classList.add('is-done');
             textEl.innerHTML = 'Đã xóa!';
-            
+
             setTimeout(() => {
                 btnClear.classList.remove('is-done');
                 textEl.innerHTML = 'Xóa lịch sử';
             }, 2000);
-            
+
         }, 1600);
     });
 }
@@ -1621,13 +1621,13 @@ function saveCurrentStopwatchTime() {
         const s = formatTwoDigits(Math.floor((totalMs % 60000) / 1000));
         const ms = formatTwoDigits(Math.floor((totalMs % 1000) / 10));
         const timeStr = `${m}:${s}:${ms}`;
-        
+
         const lastEntry = swHistory[swHistory.length - 1];
         const lastTimeStr = (lastEntry && typeof lastEntry === 'object') ? lastEntry.time : lastEntry;
-        
+
         if (swHistory.length === 0 || lastTimeStr !== timeStr) {
             const now = new Date();
-            const dateStr = `${formatTwoDigits(now.getDate())}/${formatTwoDigits(now.getMonth()+1)}/${now.getFullYear()} ${formatTwoDigits(now.getHours())}:${formatTwoDigits(now.getMinutes())}`;
+            const dateStr = `${formatTwoDigits(now.getDate())}/${formatTwoDigits(now.getMonth() + 1)}/${now.getFullYear()} ${formatTwoDigits(now.getHours())}:${formatTwoDigits(now.getMinutes())}`;
             swHistory.push({ time: timeStr, date: dateStr });
             localStorage.setItem('dongho_sw_history', JSON.stringify(swHistory));
         }
@@ -1909,7 +1909,7 @@ function makeElementDraggable(el, posKey) {
 
     function onStart(e) {
         if (!isEditingPositions) return;
-        
+
         currentActiveLayerKey = posKey;
         currentActiveLayerEl = el;
         document.querySelectorAll('.active-layer').forEach(d => d.classList.remove('active-layer'));
@@ -1987,11 +1987,11 @@ if (editingControls) {
     let isDraggingCtrl = false;
 
     editingControls.addEventListener('mousedown', dragCtrlStart);
-    editingControls.addEventListener('touchstart', dragCtrlStart, {passive: false});
-    
+    editingControls.addEventListener('touchstart', dragCtrlStart, { passive: false });
+
     window.addEventListener('mousemove', dragCtrlMove);
-    window.addEventListener('touchmove', dragCtrlMove, {passive: false});
-    
+    window.addEventListener('touchmove', dragCtrlMove, { passive: false });
+
     window.addEventListener('mouseup', dragCtrlEnd);
     window.addEventListener('touchend', dragCtrlEnd);
 
@@ -2000,20 +2000,20 @@ if (editingControls) {
         isDraggingCtrl = true;
         const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
         const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
-        
+
         initialClientX = clientX;
         initialClientY = clientY;
 
         const rect = editingControls.getBoundingClientRect();
         ctrlStartX = clientX - rect.left;
         ctrlStartY = clientY - rect.top;
-        
+
         editingControls.style.left = rect.left + 'px';
         editingControls.style.top = rect.top + 'px';
         editingControls.style.transform = 'none';
         editingControls.style.margin = '0';
         editingControls.style.right = 'auto';
-        
+
         e.preventDefault();
     }
 
@@ -2021,7 +2021,7 @@ if (editingControls) {
         if (!isDraggingCtrl) return;
         const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
         const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
-        
+
         editingControls.style.left = (clientX - ctrlStartX) + 'px';
         editingControls.style.top = (clientY - ctrlStartY) + 'px';
         e.preventDefault();
@@ -2030,13 +2030,13 @@ if (editingControls) {
     function dragCtrlEnd(e) {
         if (!isDraggingCtrl) return;
         isDraggingCtrl = false;
-        
+
         const clientX = e.type.includes('mouse') ? e.clientX : e.changedTouches[0].clientX;
         const clientY = e.type.includes('mouse') ? e.clientY : e.changedTouches[0].clientY;
-        
+
         const dx = Math.abs(clientX - initialClientX);
         const dy = Math.abs(clientY - initialClientY);
-        
+
         // If it was a click (didn't move much) and we clicked on the drag handle
         if (dx < 5 && dy < 5 && editingButtonsWrapper) {
             if (e.target.closest('#drag-handle')) {
@@ -2060,7 +2060,7 @@ if (editingControls) {
 function ensureUniqueZIndices() {
     if (!settings.elementPositions) settings.elementPositions = {};
     const keys = Object.keys(draggableMap);
-    
+
     // Sort keys by current z-index (default 0)
     keys.sort((a, b) => {
         let zA = (settings.elementPositions[a] && settings.elementPositions[a].z !== undefined) ? settings.elementPositions[a].z : 0;
@@ -2081,15 +2081,15 @@ if (btnLayerUp) {
     btnLayerUp.addEventListener('click', () => {
         if (!currentActiveLayerKey || !currentActiveLayerEl) return;
         ensureUniqueZIndices();
-        
+
         let currentZ = settings.elementPositions[currentActiveLayerKey].z;
         const keys = Object.keys(draggableMap);
         let targetKey = keys.find(k => settings.elementPositions[k] && settings.elementPositions[k].z === currentZ + 1);
-        
+
         if (targetKey) {
             settings.elementPositions[currentActiveLayerKey].z = currentZ + 1;
             settings.elementPositions[targetKey].z = currentZ;
-            
+
             currentActiveLayerEl.style.zIndex = currentZ + 1;
             const targetEl = document.getElementById(draggableMap[targetKey]);
             if (targetEl) targetEl.style.zIndex = currentZ;
@@ -2101,15 +2101,15 @@ if (btnLayerDown) {
     btnLayerDown.addEventListener('click', () => {
         if (!currentActiveLayerKey || !currentActiveLayerEl) return;
         ensureUniqueZIndices();
-        
+
         let currentZ = settings.elementPositions[currentActiveLayerKey].z;
         const keys = Object.keys(draggableMap);
         let targetKey = keys.find(k => settings.elementPositions[k] && settings.elementPositions[k].z === currentZ - 1);
-        
+
         if (targetKey) {
             settings.elementPositions[currentActiveLayerKey].z = currentZ - 1;
             settings.elementPositions[targetKey].z = currentZ;
-            
+
             currentActiveLayerEl.style.zIndex = currentZ - 1;
             const targetEl = document.getElementById(draggableMap[targetKey]);
             if (targetEl) targetEl.style.zIndex = currentZ;
@@ -2134,7 +2134,7 @@ if (btnDoneEditing) {
         isEditingPositions = false;
         document.body.classList.remove('editing-mode');
         if (editingControls) editingControls.style.display = 'none';
-        
+
         document.querySelectorAll('.active-layer').forEach(d => d.classList.remove('active-layer'));
         currentActiveLayerKey = null;
         currentActiveLayerEl = null;
@@ -2172,7 +2172,7 @@ window.addEventListener('load', () => {
         } else if (window.Capacitor && window.Capacitor.Plugins) {
             ScreenPinning = window.Capacitor.Plugins.ScreenPinning;
         }
-        
+
         if (ScreenPinning) {
             ScreenPinning.pin();
             isAppLocked = true;
@@ -2184,15 +2184,15 @@ window.addEventListener('load', () => {
 
 // Save stopwatch on exit
 let hasSavedOnExit = false;
-window.addEventListener('beforeunload', () => { 
-    if(!hasSavedOnExit && typeof saveCurrentStopwatchTime === 'function') {
+window.addEventListener('beforeunload', () => {
+    if (!hasSavedOnExit && typeof saveCurrentStopwatchTime === 'function') {
         hasSavedOnExit = true;
-        saveCurrentStopwatchTime(); 
+        saveCurrentStopwatchTime();
     }
 });
-document.addEventListener('visibilitychange', () => { 
-    if(document.visibilityState === 'hidden' && !hasSavedOnExit && typeof saveCurrentStopwatchTime === 'function') {
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden' && !hasSavedOnExit && typeof saveCurrentStopwatchTime === 'function') {
         hasSavedOnExit = true;
-        saveCurrentStopwatchTime(); 
+        saveCurrentStopwatchTime();
     }
 });
