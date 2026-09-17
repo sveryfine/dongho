@@ -1184,6 +1184,8 @@ function formatTwoDigits(num) {
 document.getElementById('font-selector-dropdown').addEventListener('change', (e) => {
     settings.fontStyle = e.target.value;
     updateClock(); // Force redraw of clock digits
+    if (typeof renderStopwatch === 'function') renderStopwatch(); // Force redraw of stopwatch digits
+    if (typeof renderTimer === 'function') renderTimer(); // Force redraw of timer digits
 });
 
 // Danh sÃƒÂ¡ch tÃ¡ÂºÂ¥t cÃ¡ÂºÂ£ class hiÃ¡Â»â€¡u Ã¡Â»Â©ng khÃ¡Â»â€˜i Ã„â€˜Ã¡Â»â€œng hÃ¡Â»â€œ
