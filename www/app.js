@@ -1313,7 +1313,7 @@ function updateDigitSrc(imgEl, char) {
     else if (settings.fontStyle === 'font7') suffix = 'n';
 
     if (char === ':') {
-        imgEl.src = suffix ? `assets/images/chamcham${suffix}.png` : 'chamcham.png';
+        imgEl.src = suffix ? `assets/images/chamcham${suffix}.png` : 'assets/images/chamcham.png';
         imgEl.alt = ':';
     } else {
         imgEl.src = suffix ? `assets/images/${char}${suffix}.png` : `assets/images/${char}.png`;
