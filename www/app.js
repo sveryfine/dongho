@@ -2181,3 +2181,18 @@ window.addEventListener('load', () => {
         }
     }, 500); // Wait a brief moment to ensure Capacitor bridge is ready
 });
+
+// Save stopwatch on exit
+let hasSavedOnExit = false;
+window.addEventListener('beforeunload', () => { 
+    if(!hasSavedOnExit && typeof saveCurrentStopwatchTime === 'function') {
+        hasSavedOnExit = true;
+        saveCurrentStopwatchTime(); 
+    }
+});
+document.addEventListener('visibilitychange', () => { 
+    if(document.visibilityState === 'hidden' && !hasSavedOnExit && typeof saveCurrentStopwatchTime === 'function') {
+        hasSavedOnExit = true;
+        saveCurrentStopwatchTime(); 
+    }
+});
