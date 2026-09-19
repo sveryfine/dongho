@@ -6,13 +6,18 @@
 }
 
 :root {
-    --digit-global-size: 80px;
-    --digit-h1-size: 80px;
-    --digit-h2-size: 80px;
-    --digit-m1-size: 80px;
-    --digit-m2-size: 80px;
-    --digit-s1-size: 80px;
-    --digit-s2-size: 80px;
+    --digit-global-size: 150px;
+    --digit-h1-size: 150px;
+    --digit-h2-size: 150px;
+    --digit-m1-size: 150px;
+    --digit-m2-size: 150px;
+    --digit-s1-size: 150px;
+    --digit-s2-size: 150px;
+}
+
+img {
+    -webkit-user-drag: none;
+    user-select: none;
 }
 
 body {
@@ -23,6 +28,13 @@ body {
     width: 100vw;
     height: 100vh;
     transition: filter 2s ease;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+input, textarea, select {
+    user-select: auto;
+    -webkit-user-select: auto;
 }
 
 body.idle-dim {

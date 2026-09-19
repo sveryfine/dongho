@@ -9,15 +9,15 @@ const defaultSettings = {
     autoRotate: true,
     vertical: false,
     advancedSize: false,
-    globalSize: 80,
-    h1Size: 80,
-    h2Size: 80,
-    m1Size: 80,
-    m2Size: 80,
-    s1Size: 80,
-    s2Size: 80,
+    globalSize: 150,
+    h1Size: 150,
+    h2Size: 150,
+    m1Size: 150,
+    m2Size: 150,
+    s1Size: 150,
+    s2Size: 150,
     colonSpacing: -12,
-    colonSize: 80,
+    colonSize: 150,
     datePos: { x: 0, y: 0 },
     lunarPos: { x: 0, y: 0 },
     keepAwake: false,
@@ -33,7 +33,8 @@ const defaultSettings = {
         s1: { x: 0, y: 0 }, s2: { x: 0, y: 0 },
         date: { x: 0, y: 0 }, week: { x: 0, y: 0 },
         lunar: { x: 0, y: 0 }
-    }
+    },
+    elementColors: { date: '#e2e8f0', week: '#e2e8f0', lunar: '#f59e0b' }
 };
 
 let settings = { ...defaultSettings };
@@ -1376,7 +1377,7 @@ function updateClock() {
     }
 
     // Apply position adjustments so they persist through updates (if not dragging right now)
-    if (typeof isDragging === 'undefined' || !isDragging) {
+    if (!window.isAnyElementDragging) {
         applyElementPositions();
     }
 
@@ -1406,6 +1407,9 @@ function updateDateDisplay() {
         const yyyy = now.getFullYear();
         dateDisplay.textContent = `${dayName}, ${dd}/${mm}/${yyyy}`;
         dateDisplay.classList.add('visible');
+        if (settings.elementColors && settings.elementColors.date) {
+            dateDisplay.style.color = settings.elementColors.date;
+        }
     } else {
         dateDisplay.classList.remove('visible');
     }
@@ -1420,6 +1424,9 @@ function updateDateDisplay() {
         const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
         weekDisplay.textContent = `Tuần ${weekNo}`;
         weekDisplay.classList.add('visible');
+        if (settings.elementColors && settings.elementColors.week) {
+            weekDisplay.style.color = settings.elementColors.week;
+        }
     } else if (weekDisplay) {
         weekDisplay.classList.remove('visible');
     }
@@ -1429,6 +1436,9 @@ function updateDateDisplay() {
         const lunar = convertSolar2Lunar(now.getDate(), now.getMonth() + 1, now.getFullYear(), 7);
         lunarDisplay.textContent = `Âm lịch: ${formatTwoDigits(lunar[0])}/${formatTwoDigits(lunar[1])}/${lunar[2]}`;
         lunarDisplay.classList.add('visible');
+        if (settings.elementColors && settings.elementColors.lunar) {
+            lunarDisplay.style.color = settings.elementColors.lunar;
+        }
     } else {
         lunarDisplay.classList.remove('visible');
     }
@@ -1450,6 +1460,7 @@ function makeDraggable(el, settingKey) {
         if (!el.classList.contains('visible')) return;
 
         isDragging = true;
+        window.isAnyElementDragging = true;
         hasMoved = false;
 
         const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
@@ -1482,6 +1493,7 @@ function makeDraggable(el, settingKey) {
     function onEnd(e) {
         if (!isDragging) return;
         isDragging = false;
+        window.isAnyElementDragging = false;
         el.style.transition = 'transform 0.2s ease';
 
         if (hasMoved) {
@@ -1915,7 +1927,17 @@ function makeElementDraggable(el, posKey) {
         document.querySelectorAll('.active-layer').forEach(d => d.classList.remove('active-layer'));
         el.classList.add('active-layer');
 
+        const btnColor = document.getElementById('btn-layer-color');
+        if (btnColor) {
+            if (['date', 'week', 'lunar'].includes(posKey)) {
+                btnColor.style.display = 'block';
+            } else {
+                btnColor.style.display = 'none';
+            }
+        }
+
         isDragging = true;
+        window.isAnyElementDragging = true;
         const pos = settings.elementPositions || {};
         currentX = (pos[posKey] && pos[posKey].x) || 0;
         currentY = (pos[posKey] && pos[posKey].y) || 0;
@@ -1942,6 +1964,7 @@ function makeElementDraggable(el, posKey) {
     function onEnd(e) {
         if (!isDragging) return;
         isDragging = false;
+        window.isAnyElementDragging = false;
         el.style.transition = 'transform 0.15s ease';
         if (!settings.elementPositions) settings.elementPositions = {};
         settings.elementPositions[posKey] = { x: currentX, y: currentY };
@@ -2017,13 +2040,18 @@ if (editingControls) {
         e.preventDefault();
     }
 
+    let ctrlRafId = null;
+
     function dragCtrlMove(e) {
         if (!isDraggingCtrl) return;
         const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
         const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
 
-        editingControls.style.left = (clientX - ctrlStartX) + 'px';
-        editingControls.style.top = (clientY - ctrlStartY) + 'px';
+        if (ctrlRafId) cancelAnimationFrame(ctrlRafId);
+        ctrlRafId = requestAnimationFrame(() => {
+            editingControls.style.left = (clientX - ctrlStartX) + 'px';
+            editingControls.style.top = (clientY - ctrlStartY) + 'px';
+        });
         e.preventDefault();
     }
 
@@ -2113,6 +2141,26 @@ if (btnLayerDown) {
             currentActiveLayerEl.style.zIndex = currentZ - 1;
             const targetEl = document.getElementById(draggableMap[targetKey]);
             if (targetEl) targetEl.style.zIndex = currentZ;
+        }
+    });
+}
+
+const btnLayerColor = document.getElementById('btn-layer-color');
+const inputLayerColor = document.getElementById('input-layer-color');
+if (btnLayerColor && inputLayerColor) {
+    btnLayerColor.addEventListener('click', () => {
+        if (currentActiveLayerKey && settings.elementColors && settings.elementColors[currentActiveLayerKey]) {
+            inputLayerColor.value = settings.elementColors[currentActiveLayerKey];
+        }
+        inputLayerColor.click();
+    });
+
+    inputLayerColor.addEventListener('input', (e) => {
+        if (!currentActiveLayerKey) return;
+        if (!settings.elementColors) settings.elementColors = {};
+        settings.elementColors[currentActiveLayerKey] = e.target.value;
+        if (currentActiveLayerEl) {
+            currentActiveLayerEl.style.color = e.target.value;
         }
     });
 }
